@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package name="aggrid" language="xul/html" depends="zul">
+    <script src="ext/ag-grid-community.js" />
+	<widget name="Aggrid" />
+	<widget name="Aggridcolumn" />
+</package>

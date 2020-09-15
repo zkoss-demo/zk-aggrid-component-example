@@ -1,0 +1,24 @@
+<language-addon>
+    <addon-name>aggrid</addon-name>
+  	<version>
+		<version-class>org.zkoss.zkforge.aggrid.Version</version-class>
+		<version-uid>0.8.0-SNAPSHOT</version-uid>
+		<zk-version>8.0.0</zk-version><!-- or later -->
+	</version>
+    
+	<language-name>xul/html</language-name>
+	<component>
+		<component-name>ag-grid</component-name>
+		<component-class>org.zkoss.zkforge.aggrid.Aggrid</component-class>
+		<widget-class>aggrid.Aggrid</widget-class>
+		<mold>
+			<mold-name>default</mold-name>
+			<mold-uri>mold/aggrid.js</mold-uri>
+		</mold>
+	</component>
+	<component>
+		<component-name>ag-grid-column</component-name>
+		<component-class>org.zkoss.zkforge.aggrid.Aggridcolumn</component-class>
+		<widget-class>aggrid.Aggridcolumn</widget-class>
+	</component>
+</language-addon>
