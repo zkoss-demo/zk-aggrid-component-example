@@ -28,14 +28,14 @@ import org.zkoss.zul.GroupComparator;
 /**
  * @author rudyhuang
  */
-public class Aggridcolumn extends AbstractComponent {
-	private transient Comparator<?> _sortAsc, _sortDsc;
+public class Aggridcolumn<E> extends AbstractComponent {
+	private transient Comparator<E> _sortAsc, _sortDsc;
 	private AuxInfo _auxinf;
 
 	/**
 	 * Returns the ascending sorter, or null if not available.
 	 */
-	public Comparator<?> getSortAscending() {
+	public Comparator<E> getSortAscending() {
 		return _sortAsc;
 	}
 
@@ -53,7 +53,7 @@ public class Aggridcolumn extends AbstractComponent {
 	 * Otherwise, {@link Comparator#compare} is used to group elements
 	 * and sort elements within a group.
 	 */
-	public void setSortAscending(Comparator<?> sorter) {
+	public void setSortAscending(Comparator<E> sorter) {
 		if (!Objects.equals(_sortAsc, sorter)) {
 			_sortAsc = sorter;
 		}
@@ -62,7 +62,7 @@ public class Aggridcolumn extends AbstractComponent {
 	/**
 	 * Returns the descending sorter, or null if not available.
 	 */
-	public Comparator<?> getSortDescending() {
+	public Comparator<E> getSortDescending() {
 		return _sortDsc;
 	}
 
@@ -80,7 +80,7 @@ public class Aggridcolumn extends AbstractComponent {
 	 * Otherwise, {@link Comparator#compare} is used to group elements
 	 * and sort elements within a group.
 	 */
-	public void setSortDescending(Comparator<?> sorter) {
+	public void setSortDescending(Comparator<E> sorter) {
 		if (!Objects.equals(_sortDsc, sorter)) {
 			_sortDsc = sorter;
 		}
@@ -836,8 +836,9 @@ public class Aggridcolumn extends AbstractComponent {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public Object clone() {
-		final Aggridcolumn clone = (Aggridcolumn) super.clone();
+		final Aggridcolumn<E> clone = (Aggridcolumn<E>) super.clone();
 		if (_auxinf != null)
 			clone._auxinf = (AuxInfo) _auxinf.clone();
 		return clone;

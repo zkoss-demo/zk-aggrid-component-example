@@ -1,9 +1,9 @@
 /* Aggrid.java
 
 	Purpose:
-		
+
 	Description:
-		
+
 	History:
 		Fri Jun 19 14:30:11 CST 2020, Created by rudyhuang
 
@@ -1888,10 +1888,11 @@ public class Aggrid<E> extends XulElement {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private Comparator<E> getColumnSortComparator(Component parent, String field, boolean ascending) {
 		List<Component> children = parent.getChildren();
 		for (Component child : children) {
-			Aggridcolumn c = (Aggridcolumn) child;
+			Aggridcolumn<E> c = (Aggridcolumn<E>) child;
 			if (c.isColumnGroup()) {
 				Comparator<E> found = getColumnSortComparator(c, field, ascending);
 				if (found != null)
@@ -1947,6 +1948,7 @@ public class Aggrid<E> extends XulElement {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public Object clone() {
 		final Aggrid<E> clone = (Aggrid<E>) super.clone();
 		if (_auxinf != null)
