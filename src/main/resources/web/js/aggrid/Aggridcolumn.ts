@@ -18,18 +18,18 @@ aggrid.Aggridcolumn = zk.$extends(zk.Widget, {
 	$init() {
 		this.$supers('$init', arguments);
 		this._colDef = {};
+		agGrid.ColDefUtil.ALL_PROPERTIES.forEach((prop) => {
+			Object.defineProperty(this, prop,{
+				configurable: true, // some properties are multi-type (e.g: string and function), possible duplicated
+				set(newValue) { this._colDef[prop] = newValue; },
+				get() { return this._colDef[prop]; }
+			});
+		});
 	},
 	$define: {
 		width(v) {
 			this._colDef.width = v;
 		}
-	},
-	// TODO: since I can't allow wgt.key = value to call __set, this should be refined.
-	__set(name: string, value) {
-		if (agGrid.ColDefUtil.ALL_PROPERTIES.indexOf(name) !== -1)
-			this._colDef[name] = value;
-		else
-			this[name] = value;
 	},
 	toColDef(): ColumnDef {
 		let colDef: ColumnDef = this._generateColDef();

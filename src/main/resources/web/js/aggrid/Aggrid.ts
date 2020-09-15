@@ -49,6 +49,13 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 	$init() {
 		this.$supers('$init', arguments);
 		this._gridOptions = {};
+		agGrid.PropertyKeys.ALL_PROPERTIES.forEach((prop) => {
+			Object.defineProperty(this, prop,{
+				configurable: true, // some properties are multi-type (e.g: string and function), possible duplicated
+				set(newValue) { this._gridOptions[prop] = newValue; },
+				get() { return this._gridOptions[prop]; }
+			});
+		});
 	},
 
 	$define: {
@@ -60,12 +67,6 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 				}).addClass(v);
 			}
 		}
-	},
-	__set(name: string, value) {
-		if (agGrid.PropertyKeys.ALL_PROPERTIES.indexOf(name) !== -1)
-			this._gridOptions[name] = value;
-		else
-			this[name] = value;
 	},
 	bind_() {
 		this.$supers(aggrid.Aggrid, 'bind_', arguments);
