@@ -14,67 +14,38 @@ Copyright (C) 2020 Potix Corporation. All Rights Reserved.
 -->
 <zk xmlns:w="client">
 	<zscript><![CDATA[
-    import org.zkoss.zkforge.aggrid.Car;
-
-    ListModelList model = new ListModelList();
-    for (int i = 0; i < 500; i++) {
-        model.add(new Car("Toyota", "Celica", 35000 + i));
-        model.add(new Car("Ford", "Mondeo", 32000 + i));
-        model.add(new Car("Porsche", "Boxter", 72000 + i));
-    }
-    ListModel model2 = new org.zkoss.zkforge.aggrid.AgGridListModel(model);
-
-    ListModel theme = new ListModelArray(new String[] {
-        "ag-theme-alpine", "ag-theme-alpine-dark", "ag-theme-balham", "ag-theme-balham-dark", "ag-theme-material"
-    });
-    ]]>
+	ListModel theme = new ListModelArray(new String[] {
+		"ag-theme-alpine", "ag-theme-alpine-dark", "ag-theme-balham", "ag-theme-balham-dark", "ag-theme-material"
+	});
+	]]>
 	</zscript>
-	<panel title="Car" width="800px" height="600px">
+	<panel title="Winners" width="100%" height="100%">
 		<toolbar>
 			<selectbox model="${theme}" onSelect="ag.theme = theme.get(event.getData())"/>
-			<toolbarbutton label="model[0] change">
-				<attribute name="onClick"><![CDATA[
-                model.set(0, new Car("Lamborghini", "Miura", 360000));
-                ]]></attribute>
-			</toolbarbutton>
-			<toolbarbutton label="model add 0">
-				<attribute name="onClick"><![CDATA[
-                model.add(0, new Car("BMW", "M3 GTR", 108000));
-                ]]></attribute>
-			</toolbarbutton>
-			<toolbarbutton label="model remove 0">
-				<attribute name="onClick"><![CDATA[
-                model.remove(0);
-                ]]></attribute>
-			</toolbarbutton>
-			<toolbarbutton label="show selected on server">
-				<attribute name="onClick"><![CDATA[
-                alert(model.getSelection());
-                ]]></attribute>
-			</toolbarbutton>
-			<toolbarbutton label="model multiple">
-				<attribute name="onClick"><![CDATA[
-                alert(model.isMultiple());
-                ]]></attribute>
-			</toolbarbutton>
-			<toolbarbutton label="model toggle multiple">
-				<attribute name="onClick"><![CDATA[
-                model.setMultiple(!model.isMultiple());
-                ]]></attribute>
-			</toolbarbutton>
 			<toolbarbutton label="invalidate (Server)" onClick="ag.invalidate()"/>
 			<toolbarbutton label="invalidate (Client)" w:onClick="zk.$('$ag').rerender()"/>
 		</toolbar>
 		<panelchildren>
 			<ag-grid id="ag" hflex="1" vflex="1" model="${model2}" theme="ag-theme-material"
 			         rowSelection="multiple" unSortIcon="true" pagination="true"
-			         onRowDoubleClicked="Clients.log(event.data)">
+			         onRowDoubleClicked="Clients.log(event.data)" apply="org.zkoss.zkforge.aggrid.TestComposer">
 				<ag-grid-column headerName="#" width="60" checkboxSelection="true" pinned="left" />
-				<ag-grid-column headerName="Spec">
-					<ag-grid-column field="make" resizable="true" sortable="true" filter="true"/>
-					<ag-grid-column field="model" resizable="true" sortable="true"/>
+				<ag-grid-column headerName="Athlete Data">
+					<ag-grid-column field="athlete" sortable="true" filter="true"/>
+					<ag-grid-column field="age" sortable="true" filter="agNumberColumnFilter"/>
+					<ag-grid-column field="country" headerTooltip="The country the athlete represented"/>
 				</ag-grid-column>
-				<ag-grid-column headerName="Price" field="price" resizable="true" sortable="true" filter="agNumberColumnFilter"/>
+				<ag-grid-column headerName="Olympic">
+					<ag-grid-column field="year" headerTooltip="The year of the Olympics"/>
+					<ag-grid-column field="date" filter="agDateColumnFilter" headerTooltip="The date of the Olympics"/>
+				</ag-grid-column>
+				<ag-grid-column headerName="Medals">
+					<ag-grid-column field="sport" headerTooltip="The sport the medal was for"/>
+					<ag-grid-column field="gold" headerTooltip="How many gold medals"/>
+					<ag-grid-column field="silver" headerTooltip="How many silver medals"/>
+					<ag-grid-column field="bronze" headerTooltip="How many bronze medals"/>
+					<ag-grid-column field="total" headerTooltip="The total number of medals"/>
+				</ag-grid-column>
 			</ag-grid>
 		</panelchildren>
 	</panel>
