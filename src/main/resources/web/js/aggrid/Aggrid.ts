@@ -150,9 +150,9 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 		let self = this;
 		return new class implements Datasource {
 			public getRows(params: GetRowsParams): void {
-				let {startRow, endRow, sortModel, successCallback, failCallback} = params;
+				let {startRow, endRow, sortModel, filterModel, successCallback, failCallback} = params;
 				try {
-					self.fire('onPaging', {startRow, endRow, sortModel});
+					self.fire('onPaging', {startRow, endRow, sortModel, filterModel});
 					self._successCallback = successCallback;
 				} catch (e) {
 					failCallback();

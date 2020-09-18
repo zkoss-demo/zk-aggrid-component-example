@@ -22,6 +22,7 @@ Copyright (C) 2020 Potix Corporation. All Rights Reserved.
         model.add(new Car("Ford", "Mondeo", 32000 + i));
         model.add(new Car("Porsche", "Boxter", 72000 + i));
     }
+    ListModel model2 = new org.zkoss.zkforge.aggrid.AgGridListModel(model);
 
     ListModel theme = new ListModelArray(new String[] {
         "ag-theme-alpine", "ag-theme-alpine-dark", "ag-theme-balham", "ag-theme-balham-dark", "ag-theme-material"
@@ -65,7 +66,7 @@ Copyright (C) 2020 Potix Corporation. All Rights Reserved.
 			<toolbarbutton label="invalidate (Client)" w:onClick="zk.$('$ag').rerender()"/>
 		</toolbar>
 		<panelchildren>
-			<ag-grid id="ag" hflex="1" vflex="1" model="${model}" theme="ag-theme-material"
+			<ag-grid id="ag" hflex="1" vflex="1" model="${model2}" theme="ag-theme-material"
 			         rowSelection="multiple" unSortIcon="true" pagination="true"
 			         onRowDoubleClicked="Clients.log(event.data)">
 				<ag-grid-column headerName="#" width="60" checkboxSelection="true" pinned="left" />

@@ -86,6 +86,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 		}
 	}
 
+	//#region properties
 	public String getHeaderName() {
 		return _auxinf != null ? _auxinf._headerName : null;
 	}
@@ -242,6 +243,11 @@ public class Aggridcolumn<E> extends AbstractComponent {
 	}
 
 	public void setFilter(String filter) {
+		if (filter != null && !"true".equals(filter)
+				&& !"agNumberColumnFilter".equals(filter)
+				&& !"agTextColumnFilter".equals(filter)
+				&& !"agDateColumnFilter".equals(filter))
+			throw new WrongValueException("expected null, true, agNumberColumnFilter, agTextColumnFilter or agDateColumnFilter: " + filter);
 		if (!Objects.equals(getFilter(), filter)) {
 			initAuxInfo()._filter = filter;
 			smartUpdate("filter", filter);
@@ -728,6 +734,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 			smartUpdate("openByDefault", openByDefault);
 		}
 	}
+	//#endregion
 
 	/**
 	 * Returns if this column is a column group or not.
@@ -819,6 +826,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void initSortComparator() {
 		if (isSortable()) {
 			String field = getField();

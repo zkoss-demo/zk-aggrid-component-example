@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.BitSet;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,8 @@ import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.event.Events;
 import org.zkoss.zk.ui.event.SelectEvent;
 import org.zkoss.zk.ui.sys.ContentRenderer;
+import org.zkoss.zkforge.aggrid.filter.ColumnFilters;
+import org.zkoss.zkforge.aggrid.filter.Filter;
 import org.zkoss.zul.ListModel;
 import org.zkoss.zul.event.ListDataEvent;
 import org.zkoss.zul.ext.Selectable;
@@ -45,6 +48,7 @@ import org.zkoss.zul.impl.XulElement;
 
 /**
  * Ag-Grid component.
+ * Browser support: Internet Explorer 11, Edge, Firefox, Chrome, and Safari.
  *
  * Supports {@link ListModel}.
  *
@@ -1838,21 +1842,10 @@ public class Aggrid<E> extends XulElement {
 		switch (command) {
 			case "onPaging":
 				if (_model != null) {
+					handleModelFilter((JSONObject) data.get("filterModel"));
+					handleModelSort((JSONArray) data.get("sortModel"));
 					int start = (int) data.get("startRow");
 					int end = (int) data.get("endRow");
-					JSONArray sortModel = (JSONArray) data.get("sortModel");
-					if (!sortModel.isEmpty()) {
-						if (!(_model instanceof Sortable))
-							throw new UiException("Sortable must be implemented in " + _model.getClass());
-						Sortable<E> model = getSortableModel();
-						for (Object each : sortModel) {
-							JSONObject sort = (JSONObject) each;
-							boolean isAscending = "asc".equals(sort.get("sort"));
-							Comparator<E> comp = getColumnSortComparator(this, String.valueOf(sort.get("colId")), isAscending);
-							if (comp != null)
-								model.sort(comp, isAscending);
-						}
-					}
 					int modelSize = _model.getSize();
 					if (modelSize < end) end = modelSize;
 					response("pagingBlock",
@@ -1885,6 +1878,43 @@ public class Aggrid<E> extends XulElement {
 				break;
 			default:
 				super.service(request, everError);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void handleModelFilter(JSONObject filterModel) {
+		if (!filterModel.isEmpty()) {
+			if (!(_model instanceof Filterable))
+				throw new UiException("Filterable must be implemented in " + _model.getClass());
+			Filterable<E> model = ((Filterable<E>) _model);
+			Set<Filter<E>> newFilters = new HashSet<>();
+			for (Map.Entry<Object, Object> each : filterModel.entrySet()) {
+				newFilters.add((Filter<E>) ColumnFilters.build(
+					Objects.toString(each.getKey()), (JSONObject) each.getValue()
+				));
+			}
+			if (!newFilters.equals(model.getFilters())) {
+				model.removeAllFilters();
+				model.applyFilters(newFilters);
+			}
+		} else {
+			if (_model instanceof Filterable)
+				((Filterable<?>) _model).removeAllFilters();
+		}
+	}
+
+	private void handleModelSort(JSONArray sortModel) {
+		if (!sortModel.isEmpty()) {
+			if (!(_model instanceof Sortable))
+				throw new UiException("Sortable must be implemented in " + _model.getClass());
+			Sortable<E> model = getSortableModel();
+			for (Object each : sortModel) {
+				JSONObject sort = (JSONObject) each;
+				boolean isAscending = "asc".equals(sort.get("sort"));
+				Comparator<E> comp = getColumnSortComparator(this, String.valueOf(sort.get("colId")), isAscending);
+				if (comp != null)
+					model.sort(comp, isAscending);
+			}
 		}
 	}
 
