@@ -27,12 +27,12 @@ Copyright (C) 2020 Potix Corporation. All Rights Reserved.
 		</toolbar>
 		<panelchildren>
 			<ag-grid id="ag" hflex="1" vflex="1" model="${model2}" theme="ag-theme-material"
-			         rowSelection="multiple" unSortIcon="true" pagination="true"
+			         rowSelection="multiple" pagination="true"
 			         onRowDoubleClicked="Clients.log(event.data)" apply="org.zkoss.zkforge.aggrid.TestComposer">
 				<ag-grid-column headerName="#" width="60" checkboxSelection="true" pinned="left" />
-				<ag-grid-column headerName="Athlete Data">
-					<ag-grid-column field="athlete" sortable="true" filter="true"/>
-					<ag-grid-column field="age" sortable="true" filter="agNumberColumnFilter"/>
+				<ag-grid-column headerName="Athlete Details">
+					<ag-grid-column field="athlete" filter="true"/>
+					<ag-grid-column field="age" filter="agNumberColumnFilter"/>
 					<ag-grid-column field="country" headerTooltip="The country the athlete represented"/>
 				</ag-grid-column>
 				<ag-grid-column headerName="Olympic">
@@ -41,10 +41,10 @@ Copyright (C) 2020 Potix Corporation. All Rights Reserved.
 				</ag-grid-column>
 				<ag-grid-column headerName="Medals">
 					<ag-grid-column field="sport" headerTooltip="The sport the medal was for"/>
-					<ag-grid-column field="gold" headerTooltip="How many gold medals"/>
-					<ag-grid-column field="silver" headerTooltip="How many silver medals"/>
-					<ag-grid-column field="bronze" headerTooltip="How many bronze medals"/>
-					<ag-grid-column field="total" headerTooltip="The total number of medals"/>
+					<ag-grid-column field="total" headerTooltip="The total number of medals" filter="agNumberColumnFilter" columnGroupShow="closed"/>
+					<ag-grid-column field="gold" headerTooltip="How many gold medals" filter="agNumberColumnFilter" columnGroupShow="open"/>
+					<ag-grid-column field="silver" headerTooltip="How many silver medals" filter="agNumberColumnFilter" columnGroupShow="open"/>
+					<ag-grid-column field="bronze" headerTooltip="How many bronze medals" filter="agNumberColumnFilter" columnGroupShow="open"/>
 				</ag-grid-column>
 			</ag-grid>
 		</panelchildren>

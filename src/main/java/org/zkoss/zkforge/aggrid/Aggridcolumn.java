@@ -98,13 +98,16 @@ public class Aggridcolumn<E> extends AbstractComponent {
 		}
 	}
 
-	public boolean isColumnGroupShow() {
-		return _auxinf != null && _auxinf.getBoolean(AuxInfo.Attr.COLUMNGROUPSHOW);
+	public String getColumnGroupShow() {
+		return _auxinf != null ? _auxinf._columnGroupShow : null;
 	}
 
-	public void setColumnGroupShow(boolean columnGroupShow) {
-		if (isColumnGroupShow() != columnGroupShow) {
-			initAuxInfo().setBoolean(AuxInfo.Attr.COLUMNGROUPSHOW, columnGroupShow);
+	public void setColumnGroupShow(String columnGroupShow) {
+		if (columnGroupShow != null && !"open".equals(columnGroupShow)
+				&& !"closed".equals(columnGroupShow))
+			throw new WrongValueException("expected null, open or closed: " + columnGroupShow);
+		if (!Objects.equals(getColumnGroupShow(), columnGroupShow)) {
+			initAuxInfo()._columnGroupShow = columnGroupShow;
 			smartUpdate("columnGroupShow", columnGroupShow);
 		}
 	}
@@ -758,7 +761,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 		initSortComparator();
 		if (_auxinf != null) {
 			render(renderer, "headerName", getHeaderName());
-			render(renderer, "columnGroupShow", isColumnGroupShow());
+			render(renderer, "columnGroupShow", getColumnGroupShow());
 			render(renderer, "headerClass", getHeaderName());
 			render(renderer, "toolPanelClass", getToolPanelClass());
 			render(renderer, "suppressColumnsToolPanel", isSuppressColumnsToolPanel());
@@ -865,7 +868,6 @@ public class Aggridcolumn<E> extends AbstractComponent {
 			CHECKBOXSELECTION,
 			COLLD,
 			COLUMNGROUP,
-			COLUMNGROUPSHOW,
 			DNDSOURCE,
 			EDITABLE,
 			ENABLECELLCHANGEFLASH,
@@ -922,6 +924,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 		private final BitSet _bitset = new BitSet();
 		// Columns and Column Groups
 		private String _headerName;
+		private String _columnGroupShow;
 		private String _headerClass;
 		private String _toolPanelClass;
 		// Columns Only
