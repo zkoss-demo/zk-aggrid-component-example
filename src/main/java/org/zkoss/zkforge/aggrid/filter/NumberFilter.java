@@ -46,8 +46,8 @@ public class NumberFilter implements Filter<Number> {
 				return compareTo(_filter, data) < 0;
 			case "greaterThanOrEqual":
 				return compareTo(_filter, data) <= 0;
-			case "inRange":
-				return compareTo(_filter, data) <= 0 && compareTo(_filterTo, data) >= 0;
+			case "inRange": // TODO: implement inRangeInclusive
+				return compareTo(_filter, data) < 0 && compareTo(_filterTo, data) > 0;
 			default: // no filter
 				return true;
 		}

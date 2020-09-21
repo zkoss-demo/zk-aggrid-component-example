@@ -43,8 +43,8 @@ public class DateFilter implements Filter<Date> {
 				return data != null && data.before(_from);
 			case "greaterThan":
 				return data != null && data.after(_from);
-			case "inRange":
-				return data != null && data.after(_from) && data.before(_to);
+			case "inRange": // TODO: implement inRangeInclusive
+				return data != null && data.compareTo(_from) > 0 && data.compareTo(_to) < 0;
 			default: // no filter
 				return true;
 		}

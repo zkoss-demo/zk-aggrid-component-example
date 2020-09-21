@@ -11,12 +11,19 @@ Copyright (C) 2020 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zkforge.aggrid.filter;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.zkoss.json.JSONObject;
 
 /**
  * @author rudyhuang
  */
 public class ColumnFilters {
+	private ColumnFilters() {
+	}
+
 	public static Filter<?> build(String column, JSONObject config) {
 		Filter<?> filter;
 		String operator = (String) config.get("operator");
@@ -42,10 +49,18 @@ public class ColumnFilters {
 				return new NumberFilter(type, (Number) filter, (Number) filterTo);
 			case "text":
 				return new TextFilter(type, (String) filter);
-//			case "date": // TODO
-//				return new DateFilter(type);
+			case "date":
+				try {
+					return new DateFilter(type, toDate(config.get("dateFrom")), toDate(config.get("dateTo")));
+				} catch (ParseException e) {
+					throw new IllegalArgumentException("Can't create a DateFilter: ", e);
+				}
 			default:
 				throw new UnsupportedOperationException("filter type not supported: " + filterType);
 		}
+	}
+
+	private static Date toDate(Object date) throws ParseException {
+		return date == null ? null : new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse((String) date);
 	}
 }
