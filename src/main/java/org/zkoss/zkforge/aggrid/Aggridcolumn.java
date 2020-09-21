@@ -737,6 +737,28 @@ public class Aggridcolumn<E> extends AbstractComponent {
 			smartUpdate("openByDefault", openByDefault);
 		}
 	}
+
+	public boolean isRowGroup() {
+		return _auxinf != null && _auxinf.getBoolean(AuxInfo.Attr.ROWGROUP);
+	}
+
+	public void setRowGroup(boolean rowGroup) {
+		if (isRowGroup() != rowGroup) {
+			_auxinf.setBoolean(AuxInfo.Attr.ROWGROUP, rowGroup);
+			smartUpdate("rowGroup", rowGroup);
+		}
+	}
+
+	public boolean isPivot() {
+		return _auxinf != null && _auxinf.getBoolean(AuxInfo.Attr.PIVOT);
+	}
+
+	public void setPivot(boolean pivot) {
+		if (isPivot() != pivot) {
+			_auxinf.setBoolean(AuxInfo.Attr.PIVOT, pivot);
+			smartUpdate("pivot", pivot);
+		}
+	}
 	//#endregion
 
 	/**
@@ -806,6 +828,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 			render(renderer, "cellClass", getCellClass());
 			render(renderer, "editable", isEditable());
 			render(renderer, "aggFunc", getAggFunc());
+			render(renderer, "rowGroup", isRowGroup());
 			if (_auxinf._rowGroupIndex >= 0)
 				render(renderer, "rowGroupIndex", _auxinf._rowGroupIndex);
 			if (_auxinf._pivotIndex >= 0)
@@ -813,6 +836,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 			render(renderer, "unSortIcon", isUnSortIcon());
 			render(renderer, "enableRowGroup", isEnableRowGroup());
 			render(renderer, "enablePivot", isEnablePivot());
+			render(renderer, "pivot", isPivot());
 			render(renderer, "pivotTotals", isPivotTotals());
 			render(renderer, "enableValue", isEnableValue());
 			render(renderer, "enableCellChangeFlash", isEnableCellChangeFlash());
@@ -861,51 +885,30 @@ public class Aggridcolumn<E> extends AbstractComponent {
 	 */
 	private static class AuxInfo implements Serializable, Cloneable {
 		public enum Attr {
-			AGGFUNC,
 			AUTOHEIGHT,
-			CELLCLASS,
-			CELLSTYLE,
 			CHECKBOXSELECTION,
-			COLLD,
-			COLUMNGROUP,
 			DNDSOURCE,
 			EDITABLE,
 			ENABLECELLCHANGEFLASH,
 			ENABLEPIVOT,
 			ENABLEROWGROUP,
 			ENABLEVALUE,
-			FIELD,
-			FILTER,
-			FLEX,
 			FLOATINGFILTER,
-			FLOATINGFILTERCOMPONENT,
-			GROUPID,
 			HEADERCHECKBOXSELECTION,
 			HEADERCHECKBOXSELECTIONFILTEREDONLY,
-			HEADERCLASS,
-			HEADERNAME,
-			HEADERTOOPTIP,
 			HIDE,
 			LOCKPINNED,
 			LOCKPOSITION,
 			LOCKVISIBLE,
 			MARRYCHILDREN,
-			MAXWIDTH,
-			MINWIDTH,
 			OPENBYDEFAULT,
-			PINNED,
-			PIVOTINDEX,
+			PIVOT,
 			PIVOTTOTALS,
 			RESIZABLE,
 			ROWDRAG,
-			ROWDRAGTEXT,
-			ROWGROUPINDEX,
+			ROWGROUP,
 			SINGLECLICKEDIT,
-			SORT,
 			SORTABLE,
-			SORTASCENDING,
-			SORTDESCENDING,
-			SORTEDAT,
 			SUPPRESSCELLFLASH,
 			SUPPRESSCOLUMNSTOOLPANEL,
 			SUPPRESSFILTERSTOOLPANEL,
@@ -913,12 +916,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 			SUPPRESSMOVABLE,
 			SUPPRESSNAVIGABLE,
 			SUPPRESSSIZETOFIT,
-			TOOLPANELCLASS,
-			TOOLTIP,
-			TOOLTIPFIELD,
-			TYPE,
-			UNSORTICON,
-			WIDTH
+			UNSORTICON
 		}
 
 		private final BitSet _bitset = new BitSet();
