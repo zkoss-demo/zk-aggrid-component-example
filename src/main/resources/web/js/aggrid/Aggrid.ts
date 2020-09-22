@@ -132,18 +132,25 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 		if (successCallback) {
 			this._successCallback = null;
 			successCallback(rows, lastRow);
+			this._checkSelected(this._selectedUuids);
 		}
 	},
 	set_refreshInfiniteCache() {
 		this._api().refreshInfiniteCache();
 	},
-	setSelectedIds(ids: number[], fromServer?: boolean) {
+	set_selectedUuids(uuids: number[], fromServer?: boolean) {
+		this._selectedUuids = uuids;
+		this._checkSelected(uuids, fromServer);
+	},
+	_checkSelected: function (uuids: number[], triggerSelectionChanged = false) {
 		let api = this._api();
-		api.deselectAll();
-		api.forEachNode(node => {
-			if (ids.indexOf(node.id) !== -1)
-				node.setSelected(true, false, fromServer);
-		});
+		if (api) {
+			api.deselectAll();
+			api.forEachNode(node => {
+				if (uuids.indexOf(node.id) !== -1)
+					node.setSelected(true, false, triggerSelectionChanged);
+			});
+		}
 	},
 
 	_newDataSource(): Datasource {

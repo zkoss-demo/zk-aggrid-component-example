@@ -11,6 +11,8 @@ Copyright (C) 2020 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zkforge.aggrid;
 
+import static java.util.stream.Collectors.toSet;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.BitSet;
@@ -20,7 +22,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.beanutils.BeanUtils;
 
@@ -1631,11 +1632,7 @@ public class Aggrid<E> extends XulElement {
 				break;
 			case ListDataEvent.SELECTION_CHANGED:
 				if (!_ignoreDataSelectionEvent) {
-					Set<E> selection = getSelectableModel().getSelection();
-					smartUpdate("selectedIds", selection
-							.stream()
-							.map(Objects::hashCode)
-							.collect(Collectors.toSet()));
+					smartUpdate("_selectedUuids", getSelectedUuids());
 				}
 				break;
 			case ListDataEvent.MULTIPLE_CHANGED:
@@ -1650,6 +1647,11 @@ public class Aggrid<E> extends XulElement {
 		super.renderProperties(renderer);
 		if (!"ag-theme-alpine".equals(_theme))
 			render(renderer, "theme", _theme);
+		if (_model != null) {
+			if (!getSelectableModel().isSelectionEmpty()) {
+				render(renderer, "_selectedUuids", getSelectedUuids());
+			}
+		}
 		if (_auxinf != null) {
 			render(renderer, "suppressAutoSize", isSuppressAutoSize());
 			if (_auxinf.autoSizePadding != 4)
@@ -1813,6 +1815,13 @@ public class Aggrid<E> extends XulElement {
 			render(renderer, "serverSideSortingAlwaysResets", isServerSideSortingAlwaysResets());
 			render(renderer, "suppressBrowserResizeObserver", isSuppressBrowserResizeObserver());
 		}
+	}
+
+	private Set<Integer> getSelectedUuids() {
+		return getSelectableModel().getSelection()
+				.stream()
+				.map(Objects::hashCode)
+				.collect(toSet());
 	}
 
 	private JSONArray generateRowData(int start, int end) {
