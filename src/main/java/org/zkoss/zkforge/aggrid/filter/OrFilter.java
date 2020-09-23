@@ -21,7 +21,7 @@ public class OrFilter<T> extends CompositeFilter<T> {
 
 	@Override
 	public boolean test(T data) {
-		return _condition1.or(_condition1).test(data);
+		return _condition1.or(_condition2).test(data);
 	}
 
 	@Override
