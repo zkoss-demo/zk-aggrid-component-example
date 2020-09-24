@@ -45,6 +45,7 @@ public class AgGridListModel<E> implements ListModel<E>, Sortable<E>, Filterable
 	private final ListModel<E> _model;
 	private final Set<Filter<E>> _filters = new HashSet<>();
 	private final List<E> _filteredItems = new ArrayList<>();
+	private final ListDataListener _handleListDataEvent = this::handleListDataEvent;
 	private boolean _isFilterDirty;
 
 	public AgGridListModel() {
@@ -57,7 +58,7 @@ public class AgGridListModel<E> implements ListModel<E>, Sortable<E>, Filterable
 		if (!(model instanceof Selectable))
 			throw new UnsupportedOperationException("model must implement Selectable interface");
 		this._model = model;
-		model.addListDataListener(this::handleListDataEvent);
+		model.addListDataListener(_handleListDataEvent);
 	}
 
 	private void handleListDataEvent(ListDataEvent event) {

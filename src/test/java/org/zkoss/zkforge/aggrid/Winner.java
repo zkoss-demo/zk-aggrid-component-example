@@ -12,6 +12,7 @@ Copyright (C) 2020 Potix Corporation. All Rights Reserved.
 package org.zkoss.zkforge.aggrid;
 
 import java.util.Date;
+import java.util.StringJoiner;
 
 public class Winner {
 	private String athlete;
@@ -103,5 +104,17 @@ public class Winner {
 
 	public void setTotal(int total) {
 		this.total = total;
+	}
+
+	@Override
+	public String toString() {
+		return new StringJoiner(", ", Winner.class.getSimpleName() + "[", "]")
+				.add("athlete='" + athlete + "'")
+				.add("age=" + age)
+				.add("country='" + country + "'")
+				.add("year=" + year)
+				.add("sport='" + sport + "'")
+				.add("total=" + total)
+				.toString();
 	}
 }

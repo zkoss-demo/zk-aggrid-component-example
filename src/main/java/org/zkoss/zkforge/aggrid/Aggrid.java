@@ -11,6 +11,7 @@ Copyright (C) 2020 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zkforge.aggrid;
 
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 import java.io.IOException;
@@ -43,6 +44,7 @@ import org.zkoss.zkforge.aggrid.filter.ColumnFilters;
 import org.zkoss.zkforge.aggrid.filter.Filter;
 import org.zkoss.zul.ListModel;
 import org.zkoss.zul.event.ListDataEvent;
+import org.zkoss.zul.event.ListDataListener;
 import org.zkoss.zul.ext.Selectable;
 import org.zkoss.zul.ext.Sortable;
 import org.zkoss.zul.impl.XulElement;
@@ -68,7 +70,7 @@ public class Aggrid<E> extends XulElement {
 		addClientEvent(Aggrid.class, "onRowClicked", 0);
 		addClientEvent(Aggrid.class, "onRowDoubleClicked", 0);
 		addClientEvent(Aggrid.class, "onRowSelected", 0);
-		addClientEvent(Aggrid.class, "onSelectionChanged", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Aggrid.class, "onSelectionChanged", CE_IMPORTANT);
 		addClientEvent(Aggrid.class, "onCellContextMenu", 0);
 		addClientEvent(Aggrid.class, "onRangeSelectionChanged", 0);
 		// Editing
@@ -132,6 +134,7 @@ public class Aggrid<E> extends XulElement {
 	private ListModel<E> _model;
 	/** whether to ignore ListDataEvent.SELECTION_CHANGED */
 	private transient boolean _ignoreDataSelectionEvent;
+	private final ListDataListener _modelListDataListener = this::onListDataChange;
 
 	//#region properties
 	public boolean isSuppressAutoSize() {
@@ -1610,14 +1613,20 @@ public class Aggrid<E> extends XulElement {
 	}
 
 	public void setModel(ListModel<E> model) {
-		if (!Objects.equals(_model, model)) {
+		if (_model != model) {
+			if (model != null && !(model instanceof Selectable))
+				throw new UiException(model.getClass() + " must implement " + Selectable.class);
 			if (_model != null) {
-				_model.removeListDataListener(this::onListDataChange);
+				_model.removeListDataListener(_modelListDataListener);
 			}
+
 			_model = model;
-			if (model != null) {
-				getSelectableModel().setMultiple("multiple".equals(getRowSelection()));
-				model.addListDataListener(this::onListDataChange);
+			boolean isModelPresented = _model != null;
+			smartUpdate("model", isModelPresented);
+			if (isModelPresented) {
+				setRowSelection(getSelectableModel().isMultiple() ? "multiple" : "single");
+				model.addListDataListener(_modelListDataListener);
+				smartUpdate("_selectedUuids", getSelectedUuids());
 			}
 		}
 	}
@@ -1647,10 +1656,9 @@ public class Aggrid<E> extends XulElement {
 		super.renderProperties(renderer);
 		if (!"ag-theme-alpine".equals(_theme))
 			render(renderer, "theme", _theme);
-		if (_model != null) {
-			if (!getSelectableModel().isSelectionEmpty()) {
-				render(renderer, "_selectedUuids", getSelectedUuids());
-			}
+		render(renderer, "model", _model != null);
+		if (_model != null && !getSelectableModel().isSelectionEmpty()) {
+			render(renderer, "_selectedUuids", getSelectedUuids());
 		}
 		if (_auxinf != null) {
 			render(renderer, "suppressAutoSize", isSuppressAutoSize());
@@ -1817,11 +1825,11 @@ public class Aggrid<E> extends XulElement {
 		}
 	}
 
-	private Set<Integer> getSelectedUuids() {
+	private List<Integer> getSelectedUuids() {
 		return getSelectableModel().getSelection()
 				.stream()
 				.map(Objects::hashCode)
-				.collect(toSet());
+				.collect(toList());
 	}
 
 	private JSONArray generateRowData(int start, int end) {
@@ -1868,14 +1876,22 @@ public class Aggrid<E> extends XulElement {
 				if (_model != null) {
 					Selectable<E> smodel = getSelectableModel();
 					prevSeldObjects = new LinkedHashSet<>(smodel.getSelection());
-					List<Integer> selectedIds = Generics.cast(data.get("selectedIds"));
+					List<Integer> selectedIds = Generics.cast(data.get("selected"));
+					List<Integer> unselectedIds = Generics.cast(data.get("unselected"));
 					selectedObjects = selectedIds.stream()
-							.map(index -> _model.getElementAt(index))
-							.collect(Collectors.toCollection(LinkedHashSet::new));
+							.map(_model::getElementAt)
+							.collect(toSet());
 					final boolean oldIDSE = _ignoreDataSelectionEvent;
 					try {
 						_ignoreDataSelectionEvent = true;
-						smodel.setSelection(selectedObjects);
+						if (smodel.isMultiple()) {
+							selectedObjects.forEach(smodel::addToSelection);
+							unselectedIds.stream()
+									.map(_model::getElementAt)
+									.forEach(smodel::removeFromSelection);
+						} else {
+							smodel.setSelection(selectedObjects);
+						}
 					} finally {
 						_ignoreDataSelectionEvent = oldIDSE;
 					}
@@ -1962,8 +1978,8 @@ public class Aggrid<E> extends XulElement {
 	public void onPageAttached(Page newpage, Page oldpage) {
 		super.onPageAttached(newpage, oldpage);
 		if (_model != null) {
-			_model.removeListDataListener(this::onListDataChange);
-			_model.addListDataListener(this::onListDataChange);
+			_model.removeListDataListener(_modelListDataListener);
+			_model.addListDataListener(_modelListDataListener);
 		}
 	}
 
@@ -1971,7 +1987,7 @@ public class Aggrid<E> extends XulElement {
 	public void onPageDetached(Page page) {
 		super.onPageDetached(page);
 		if (_model != null) {
-			_model.removeListDataListener(this::onListDataChange);
+			_model.removeListDataListener(_modelListDataListener);
 		}
 	}
 

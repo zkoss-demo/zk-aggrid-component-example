@@ -46,9 +46,14 @@ interface GetRowsParams {
 aggrid.Aggrid = zk.$extends(zul.Widget, {
 	_theme: 'ag-theme-alpine',
 
-	$init() {
+	$init(): void {
 		this.$supers('$init', arguments);
 		this._gridOptions = {};
+		this._selection = {
+			'selected': [],
+			'unselected': []
+		};
+		this._selectedUuids = new Set();
 		agGrid.PropertyKeys.ALL_PROPERTIES.forEach((prop) => {
 			Object.defineProperty(this, prop,{
 				configurable: true, // some properties are multi-type (e.g: string and function), possible duplicated
@@ -59,7 +64,12 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 	},
 
 	$define: {
-		theme(v: string) {
+		model(v: boolean): void {
+			if (this.desktop) {
+				this._api().setDatasource(v ? this._newDataSource() : this._emptyDataSource());
+			}
+		},
+		theme(v: string): void {
 			if (this.desktop) {
 				jq(this.$n()).removeClass((index, className) => {
 					let found = className.match(/ag-theme-[\w-]+/);
@@ -68,50 +78,71 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 			}
 		}
 	},
-	bind_() {
+	bind_(): void {
 		this.$supers(aggrid.Aggrid, 'bind_', arguments);
 		let gridOptions = this._gridOptions;
 		if (this.nChildren) {
 			gridOptions.columnDefs = aggrid.Aggridcolumn.mapToColumnDefs(this.firstChild);
 		}
 		gridOptions.getRowNodeId = this._getRowUuid;
-		this._initRowModel(gridOptions);
+		gridOptions.rowModelType = 'infinite';
+		gridOptions.datasource = this._model ? this._newDataSource() : this._emptyDataSource();
 		new agGrid.Grid(this.$n(), gridOptions);
 		this._registerCallbacks();
 	},
-	unbind_() {
+	unbind_(): void {
 		this._unregisterCallbacks();
 		this.$supers(aggrid.Aggrid, 'unbind_', arguments);
 	},
 
-	_initRowModel(gridOptions) {
-		gridOptions.rowModelType = 'infinite';
-		gridOptions.datasource = this._newDataSource();
-	},
-	_getRowUuid(item): string {
+	_getRowUuid(item): number {
 		return item['_zk_uuid'];
 	},
-	_registerCallbacks() {
+	_registerCallbacks(): void {
 		this._api().addGlobalListener(this.proxy(this._handleEvents));
 	},
-	_unregisterCallbacks() {
+	_unregisterCallbacks(): void {
 		this._api().removeGlobalListener(this.proxy(this._handleEvents));
 	},
-	_api() {
+	_api(): any {
 		return this._gridOptions.api;
 	},
-	_handleEvents(name: string, e) {
-		let api = e.api;
+	_handleEvents(name: string, e): void {
+		let selection = this._selection,
+			selectedUuids: Set<number> = this._selectedUuids;
 		switch (name) {
+			case 'rowSelected':
+				let node = e.node,
+					uuid = node.id,
+					selected = node.selected,
+					isInRecord = selectedUuids.has(uuid);
+				if (selected != isInRecord) { // only handled if changed
+					selection[selected ? 'selected' : 'unselected'].push(e.rowIndex);
+					selectedUuids[selected ? 'add' : 'delete'](uuid);
+				}
+				this._fireEvent(name, e);
+				break;
 			case 'selectionChanged':
-				let selectedIds = api.getSelectedNodes()
-					.map(curr => curr.rowIndex) // FIXME: wrong if sorted in clientSide
-					.filter(id => id != null);
-				this.fire('onSelectionChanged', {selectedIds: selectedIds});
+				if (selection['selected'].length || selection['unselected'].length) {
+					this.fire('onSelectionChanged', {
+						selected: [...selection['selected']],
+						unselected: [...selection['unselected']],
+					});
+					selection['selected'].length = 0;
+					selection['unselected'].length = 0;
+				}
+				break;
+			case 'paginationChanged':
+			case 'viewportChanged':
+				this._checkSelected();
+				this._fireEvent(name, e);
 				break;
 			default:
-				this.fire('on' + name.substring(0, 1).toUpperCase() + name.substring(1), this._filterEvent(e));
+				this._fireEvent(name, e);
 		}
+	},
+	_fireEvent(name: string, e) {
+		this.fire('on' + name.substring(0, 1).toUpperCase() + name.substring(1), this._filterEvent(e));
 	},
 	_filterEvent(e): object {
 		let keys = ['api', 'columnApi', 'event', 'node', 'column', 'source', 'target'],
@@ -127,36 +158,40 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 	domClass_(): string {
 		return this.$supers('domClass_', arguments) + ' ' + this._theme;
 	},
-	_pagingBlock(rows, lastRow) {
+	_pagingBlock(rows, lastRow): void {
 		let successCallback = this._successCallback;
 		if (successCallback) {
 			this._successCallback = null;
+			this._api().hideOverlay();
 			successCallback(rows, lastRow);
-			this._checkSelected(this._selectedUuids);
 		}
 	},
-	set_refreshInfiniteCache() {
-		this._api().refreshInfiniteCache();
-	},
-	set_selectedUuids(uuids: number[], fromServer?: boolean) {
-		this._selectedUuids = uuids;
-		this._checkSelected(uuids, fromServer);
-	},
-	_checkSelected: function (uuids: number[], triggerSelectionChanged = false) {
-		let api = this._api();
+	_checkSelected(): void {
+		let api = this._api(),
+			selectedUuids: Set<number> = this._selectedUuids;
 		if (api) {
-			api.deselectAll();
 			api.forEachNode(node => {
-				if (uuids.indexOf(node.id) !== -1)
-					node.setSelected(true, false, triggerSelectionChanged);
+				let oldValue = node.selected,
+					newValue = selectedUuids.has(node.id);
+				if (oldValue != newValue)
+					node.setSelected(newValue, false, true);
 			});
 		}
+	},
+	set_refreshInfiniteCache(): void {
+		this._api().refreshInfiniteCache();
+	},
+	set_selectedUuids(uuids: number[]): void {
+		let selectedUuids: Set<number> = this._selectedUuids;
+		selectedUuids.clear();
+		uuids.forEach(uuid => selectedUuids.add(uuid));
+		this._checkSelected();
 	},
 
 	_newDataSource(): Datasource {
 		let self = this;
 		return new class implements Datasource {
-			public getRows(params: GetRowsParams): void {
+			getRows(params: GetRowsParams): void {
 				let {startRow, endRow, sortModel, filterModel, successCallback, failCallback} = params;
 				try {
 					self.fire('onPaging', {startRow, endRow, sortModel, filterModel});
@@ -164,6 +199,16 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 				} catch (e) {
 					failCallback();
 				}
+			}
+		};
+	},
+	_emptyDataSource(): Datasource {
+		let self = this;
+		return new class implements Datasource {
+			getRows(params: GetRowsParams): void {
+				self._selectedUuids.clear();
+				self._api().showNoRowsOverlay();
+				params.successCallback([], 0);
 			}
 		};
 	}
