@@ -28,29 +28,63 @@ public class TextFilter implements Filter<String> {
 	@Override
 	public boolean test(String data) {
 		switch (_type) {
-			case "contains":
+			case CONTAINS:
 				return filterContains(data);
-			case "notContains":
+			case NOT_CONTAINS:
 				return !filterContains(data);
-			case "equals":
+			case EQUALS:
 				return filterEquals(data);
-			case "notEqual":
+			case NOT_EQUAL:
 				return !filterEquals(data);
-			case "startsWith":
-				return data != null && data.startsWith(_filter);
-			case "endsWith":
-				return data != null && data.endsWith(_filter);
+			case STARTS_WITH:
+				return startsWithIgnoreCase(data, _filter);
+			case ENDS_WITH:
+				return endsWithIgnoreCase(data, _filter);
 			default: // no filter
 				return true;
 		}
 	}
 
 	private boolean filterContains(String data) {
-		return data != null && data.contains(_filter);
+		return containsIgnoreCase(data, _filter);
+	}
+
+	private static boolean containsIgnoreCase(String str, String searchStr) {
+		if (str == null || searchStr == null)
+			return false;
+
+		final int length = searchStr.length();
+		for (int i = str.length() - length; i >= 0; i--) {
+			if (str.regionMatches(true, i, searchStr, 0, length))
+				return true;
+		}
+		return false;
+	}
+
+	private static boolean startsWithIgnoreCase(String str, String prefix) {
+		if (str == null || prefix == null)
+			return false;
+
+		final int length = prefix.length();
+		if (length > str.length())
+			return false;
+		return str.regionMatches(true, 0, prefix, 0, length);
+	}
+
+	private static boolean endsWithIgnoreCase(String str, String suffix) {
+		if (str == null || suffix == null)
+			return false;
+
+		final int length = suffix.length();
+		final int pos = str.length() - length;
+		if (pos < 0)
+			return false;
+		return str.regionMatches(true, pos, suffix, 0, length);
 	}
 
 	private boolean filterEquals(String data) {
-		return Objects.equals(data, _filter);
+		// TODO: implement caseSensitive
+		return data != null && data.equalsIgnoreCase(_filter);
 	}
 
 	@Override

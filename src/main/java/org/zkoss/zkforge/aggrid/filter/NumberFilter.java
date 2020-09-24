@@ -34,19 +34,19 @@ public class NumberFilter implements Filter<Number> {
 	@Override
 	public boolean test(Number data) {
 		switch (_type) {
-			case "equals":
+			case EQUALS:
 				return filterEquals(data);
-			case "notEqual":
+			case NOT_EQUAL:
 				return !filterEquals(data);
-			case "lessThan":
+			case LESS_THAN:
 				return compareTo(_filter, data) > 0;
-			case "lessThanOrEqual":
+			case LESS_THAN_OR_EQUAL:
 				return compareTo(_filter, data) >= 0;
-			case "greaterThan":
+			case GREATER_THAN:
 				return compareTo(_filter, data) < 0;
-			case "greaterThanOrEqual":
+			case GREATER_THAN_OR_EQUAL:
 				return compareTo(_filter, data) <= 0;
-			case "inRange": // TODO: implement inRangeInclusive
+			case IN_RANGE: // TODO: implement inRangeInclusive
 				return compareTo(_filter, data) < 0 && compareTo(_filterTo, data) > 0;
 			default: // no filter
 				return true;

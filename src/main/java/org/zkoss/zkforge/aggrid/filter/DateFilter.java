@@ -35,15 +35,15 @@ public class DateFilter implements Filter<Date> {
 	@Override
 	public boolean test(Date data) {
 		switch (_type) {
-			case "equals":
+			case EQUALS:
 				return _from.equals(data);
-			case "notEqual":
+			case NOT_EQUAL:
 				return !_from.equals(data);
-			case "lessThan":
+			case LESS_THAN:
 				return data != null && data.before(_from);
-			case "greaterThan":
+			case GREATER_THAN:
 				return data != null && data.after(_from);
-			case "inRange": // TODO: implement inRangeInclusive
+			case IN_RANGE: // TODO: implement inRangeInclusive
 				return data != null && data.compareTo(_from) > 0 && data.compareTo(_to) < 0;
 			default: // no filter
 				return true;
