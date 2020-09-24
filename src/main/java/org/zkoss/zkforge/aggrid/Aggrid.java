@@ -124,7 +124,6 @@ public class Aggrid<E> extends XulElement {
 		addClientEvent(Aggrid.class, "onRowDataUpdated", 0);
 		addClientEvent(Aggrid.class, "onToolPanelVisibleChanged", 0);
 		addClientEvent(Aggrid.class, "onAnimationQueueEmpty", 0);
-		addClientEvent(Aggrid.class, "onAnimationQueueEmpty", 0);
 		addClientEvent(Aggrid.class, "onCellKeyDown", 0);
 		addClientEvent(Aggrid.class, "onCellKeyPress", 0);
 	}
@@ -1902,7 +1901,10 @@ public class Aggrid<E> extends XulElement {
 						null, null, AuRequests.parseKeys(data)));
 				break;
 			default:
-				super.service(request, everError);
+				if (data.containsKey("agGrid"))
+					Events.postEvent(new AgGridEvent(command, this, data));
+				else
+					super.service(request, everError);
 		}
 	}
 

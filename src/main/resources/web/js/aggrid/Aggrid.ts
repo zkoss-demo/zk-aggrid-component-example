@@ -146,7 +146,7 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 	},
 	_filterEvent(e): object {
 		let keys = ['api', 'columnApi', 'event', 'node', 'column', 'source', 'target'],
-			target = {};
+			target = {agGrid: true};
 		for (let i in e) {
 			if (keys.indexOf(i) >= 0) continue;
 			if (!Object.prototype.hasOwnProperty.call(e, i)) continue;
