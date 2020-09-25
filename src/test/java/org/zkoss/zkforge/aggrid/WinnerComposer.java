@@ -23,6 +23,7 @@ import com.google.gson.reflect.TypeToken;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.util.Clients;
+import org.zkoss.zk.ui.util.Notification;
 import org.zkoss.zul.ListModel;
 import org.zkoss.zul.ListModelList;
 
@@ -85,5 +86,16 @@ public class WinnerComposer extends SelectorComposer<Aggrid<Winner>> {
 	@Listen("onClick = #btnModelNull")
 	public void handleModelNull() {
 		comp.setModel(null);
+	}
+
+	@Listen("onClick = #btnExport")
+	public void handleExport() {
+		comp.exportDataAsCsv();
+	}
+
+	@Listen("onCellValueChanged = #ag")
+	public void inlineEditAge(AgGridEvent<Winner> event) {
+		event.getNode().setAge(Integer.parseInt((String) event.get("newValue")));
+		Notification.show("Modified");
 	}
 }

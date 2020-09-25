@@ -66,7 +66,7 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 	$define: {
 		model(v: boolean): void {
 			if (this.desktop) {
-				this._api().setDatasource(v ? this._newDataSource() : this._emptyDataSource());
+				this.gridApi().setDatasource(v ? this._newDataSource() : this._emptyDataSource());
 			}
 		},
 		theme(v: string): void {
@@ -94,18 +94,21 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 		this._unregisterCallbacks();
 		this.$supers(aggrid.Aggrid, 'unbind_', arguments);
 	},
+	domClass_(): string {
+		return this.$supers('domClass_', arguments) + ' ' + this._theme;
+	},
 
 	_getRowUuid(item): number {
 		return item['_zk_uuid'];
 	},
+	gridApi(): any {
+		return this._gridOptions.api;
+	},
 	_registerCallbacks(): void {
-		this._api().addGlobalListener(this.proxy(this._handleEvents));
+		this.gridApi().addGlobalListener(this.proxy(this._handleEvents));
 	},
 	_unregisterCallbacks(): void {
-		this._api().removeGlobalListener(this.proxy(this._handleEvents));
-	},
-	_api(): any {
-		return this._gridOptions.api;
+		this.gridApi().removeGlobalListener(this.proxy(this._handleEvents));
 	},
 	_handleEvents(name: string, e): void {
 		let selection = this._selection,
@@ -145,7 +148,9 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 		this.fire('on' + name.substring(0, 1).toUpperCase() + name.substring(1), this._filterEvent(e));
 	},
 	_filterEvent(e): object {
-		let keys = ['api', 'columnApi', 'event', 'node', 'column', 'source', 'target'],
+		let keys = ['api', 'columnApi', 'afterFloatingFilter', 'event',
+				'node', 'nodes', 'overNode', 'data', 'afterFloatingFilter',
+				'columnGroup', 'column', 'columns', 'flexColumns', 'source', 'target'],
 			target = {agGrid: true};
 		for (let i in e) {
 			if (keys.indexOf(i) >= 0) continue;
@@ -154,20 +159,16 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 		}
 		return target;
 	},
-
-	domClass_(): string {
-		return this.$supers('domClass_', arguments) + ' ' + this._theme;
-	},
 	_pagingBlock(rows, lastRow): void {
 		let successCallback = this._successCallback;
 		if (successCallback) {
 			this._successCallback = null;
-			this._api().hideOverlay();
+			this.gridApi().hideOverlay();
 			successCallback(rows, lastRow);
 		}
 	},
 	_checkSelected(): void {
-		let api = this._api(),
+		let api = this.gridApi(),
 			selectedUuids: Set<number> = this._selectedUuids;
 		if (api) {
 			api.forEachNode(node => {
@@ -179,7 +180,7 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 		}
 	},
 	set_refreshInfiniteCache(): void {
-		this._api().refreshInfiniteCache();
+		this.gridApi().refreshInfiniteCache();
 	},
 	set_selectedUuids(uuids: number[]): void {
 		let selectedUuids: Set<number> = this._selectedUuids;
@@ -207,7 +208,7 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 		return new class implements Datasource {
 			getRows(params: GetRowsParams): void {
 				self._selectedUuids.clear();
-				self._api().showNoRowsOverlay();
+				self.gridApi().showNoRowsOverlay();
 				params.successCallback([], 0);
 			}
 		};

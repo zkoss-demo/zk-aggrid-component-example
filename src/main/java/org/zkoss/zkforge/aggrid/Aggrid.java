@@ -51,7 +51,7 @@ import org.zkoss.zul.impl.XulElement;
 
 /**
  * Ag-Grid component.
- * Browser support: Internet Explorer 11, Edge, Firefox, Chrome, and Safari.
+ * Browser support: Internet Explorer 11, Edge, Firefox, Chrome and Safari.
  *
  * Supports {@link ListModel}.
  *
@@ -1901,9 +1901,14 @@ public class Aggrid<E> extends XulElement {
 						null, null, AuRequests.parseKeys(data)));
 				break;
 			default:
-				if (data.containsKey("agGrid"))
-					Events.postEvent(new AgGridEvent(command, this, data));
-				else
+				if (data.containsKey("agGrid")) {
+					data.remove("agGrid");
+					Integer rowIndex = (Integer) data.get("rowIndex");
+					E node = null;
+					if (_model != null && rowIndex != null)
+						node = _model.getElementAt(rowIndex);
+					Events.postEvent(AgGridEvent.getAgGridEvent(request, node));
+				} else
 					super.service(request, everError);
 		}
 	}

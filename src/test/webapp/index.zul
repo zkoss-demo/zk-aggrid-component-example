@@ -34,11 +34,12 @@ Copyright (C) 2020 Potix Corporation. All Rights Reserved.
 		<panelchildren>
 			<ag-grid id="ag" hflex="1" vflex="1"  theme="ag-theme-material"
 			         pagination="true" suppressRowClickSelection="true"
-			         onRowDoubleClicked="Clients.log(event.data)" apply="org.zkoss.zkforge.aggrid.WinnerComposer">
+			         onRowDoubleClicked="Clients.log(event.node)" apply="org.zkoss.zkforge.aggrid.WinnerComposer"
+			         onCellContextMenu="Clients.log(event)">
 				<ag-grid-column headerName="#" width="60" checkboxSelection="true" />
 				<ag-grid-column headerName="Athlete Details">
 					<ag-grid-column field="athlete" filter="true"/>
-					<ag-grid-column field="age" filter="agNumberColumnFilter" sortable="true"/>
+					<ag-grid-column field="age" filter="agNumberColumnFilter" sortable="true" editable="true"/>
 					<ag-grid-column field="country" headerTooltip="The country the athlete represented"/>
 				</ag-grid-column>
 				<ag-grid-column headerName="Olympic">
