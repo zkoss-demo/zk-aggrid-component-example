@@ -29,6 +29,18 @@ Copyright (C) 2020 Potix Corporation. All Rights Reserved.
 			<toolbarbutton id="btnModelNew" label="model new"/>
 			<toolbarbutton id="btnModelNull" label="model null"/>
 			<toolbarbutton id="btnExport" label="export"/>
+			<toolbarbutton label="add column">
+				<attribute name="onClick"><![CDATA[
+				org.zkoss.zkforge.aggrid.Aggridcolumn ac = new org.zkoss.zkforge.aggrid.Aggridcolumn();
+				ac.setHeaderName("#");
+				ac.setWidth(60);
+				ac.setCheckboxSelection(true);
+				ag.appendChild(ac);
+				]]>
+				</attribute>
+			</toolbarbutton>
+			<toolbarbutton label="remove column" onClick="agc1.detach()"/>
+			<toolbarbutton label="set pinned" onClick='agc1.pinned = "right"'/>
 			<toolbarbutton label="invalidate (Server)" onClick="ag.invalidate()"/>
 			<toolbarbutton label="invalidate (Client)" w:onClick="zk.$('$ag').rerender()"/>
 		</toolbar>
@@ -37,7 +49,7 @@ Copyright (C) 2020 Potix Corporation. All Rights Reserved.
 			         pagination="true" suppressRowClickSelection="true"
 			         onRowDoubleClicked="Clients.log(event.node)" apply="org.zkoss.zkforge.aggrid.WinnerComposer"
 			         onCellContextMenu="Clients.log(event)">
-				<ag-grid-column headerName="#" width="60" checkboxSelection="true" />
+				<ag-grid-column id="agc1" headerName="#" width="60" checkboxSelection="true" />
 				<ag-grid-column headerName="Athlete Details">
 					<ag-grid-column field="athlete" filter="true"/>
 					<ag-grid-column field="age" filter="agNumberColumnFilter" sortable="true" editable="true"/>

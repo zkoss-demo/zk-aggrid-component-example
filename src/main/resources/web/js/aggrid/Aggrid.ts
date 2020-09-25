@@ -54,7 +54,7 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 			'unselected': []
 		};
 		this._selectedUuids = new Set();
-		agGrid.PropertyKeys.ALL_PROPERTIES.forEach((prop) => {
+		agGrid.PropertyKeys.ALL_PROPERTIES.forEach(prop => {
 			Object.defineProperty(this, prop,{
 				configurable: true, // some properties are multi-type (e.g: string and function), possible duplicated
 				set(newValue) { this._gridOptions[prop] = newValue; },
@@ -81,21 +81,39 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 	bind_(): void {
 		this.$supers(aggrid.Aggrid, 'bind_', arguments);
 		let gridOptions = this._gridOptions;
-		if (this.nChildren) {
-			gridOptions.columnDefs = aggrid.Aggridcolumn.mapToColumnDefs(this.firstChild);
-		}
+		gridOptions.columnDefs = this._getColDefs();
 		gridOptions.getRowNodeId = this._getRowUuid;
 		gridOptions.rowModelType = 'infinite';
 		gridOptions.datasource = this._model ? this._newDataSource() : this._emptyDataSource();
 		new agGrid.Grid(this.$n(), gridOptions);
 		this._registerCallbacks();
+		zWatch.listen({onResponse: this});
 	},
 	unbind_(): void {
+		zWatch.unlisten({onResponse: this});
 		this._unregisterCallbacks();
 		this.$supers(aggrid.Aggrid, 'unbind_', arguments);
 	},
 	domClass_(): string {
 		return this.$supers('domClass_', arguments) + ' ' + this._theme;
+	},
+	onChildAdded_(child: zul.Widget): void {
+		this.$super('onChildAdded_', arguments);
+		this.requestUpdateColDefs_();
+	},
+	onChildRemoved_(child: zul.Widget): void {
+		this.requestUpdateColDefs_();
+		this.$super('onChildRemoved_', arguments);
+	},
+	requestUpdateColDefs_(): void {
+		// FIXME: called by client setter will not trigger onResponse
+		this._shouldUpdateColDefs = true;
+	},
+	onResponse(e: zk.Event): void {
+		if (this._shouldUpdateColDefs) {
+			this._shouldUpdateColDefs = false;
+			this._updateColDefs();
+		}
 	},
 
 	_getRowUuid(item): number {
@@ -103,6 +121,15 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 	},
 	gridApi(): any {
 		return this._gridOptions.api;
+	},
+	columnApi(): any {
+		return this._gridOptions.columnApi;
+	},
+	_getColDefs(): Array<any> {
+		return this.nChildren ? aggrid.Aggridcolumn.mapToColumnDefs(this.firstChild) : [];
+	},
+	_updateColDefs(): void {
+		this.gridApi().setColumnDefs(this._getColDefs());
 	},
 	_registerCallbacks(): void {
 		this.gridApi().addGlobalListener(this.proxy(this._handleEvents));

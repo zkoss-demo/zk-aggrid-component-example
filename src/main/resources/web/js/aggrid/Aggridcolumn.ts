@@ -18,10 +18,13 @@ aggrid.Aggridcolumn = zk.$extends(zk.Widget, {
 	$init() {
 		this.$supers('$init', arguments);
 		this._colDef = {};
-		agGrid.ColDefUtil.ALL_PROPERTIES.forEach((prop) => {
+		agGrid.ColDefUtil.ALL_PROPERTIES.forEach(prop => {
 			Object.defineProperty(this, prop,{
 				configurable: true, // some properties are multi-type (e.g: string and function), possible duplicated
-				set(newValue) { this._colDef[prop] = newValue; },
+				set(newValue) {
+					this._colDef[prop] = newValue;
+					if (this.desktop) this._updateColDef();
+				},
 				get() { return this._colDef[prop]; }
 			});
 		});
@@ -29,7 +32,10 @@ aggrid.Aggridcolumn = zk.$extends(zk.Widget, {
 	$define: {
 		width(v) {
 			this._colDef.width = v;
+			if (this.desktop) this._updateColDef();
 		}
+	},
+	redraw(out: zk.Buffer): void {
 	},
 	toColDef(): ColumnDef {
 		let colDef: ColumnDef = this._generateColDef();
@@ -42,6 +48,15 @@ aggrid.Aggridcolumn = zk.$extends(zk.Widget, {
 		let colDef: ColumnDef = zk.copy({}, this._colDef);
 		delete colDef.children;
 		return colDef;
+	},
+	_updateColDef(): void {
+		let parent = this.parent
+		for (; parent; parent = parent.parent) {
+			if (parent.$instanceof(aggrid.Aggrid)) {
+				parent.requestUpdateColDefs_();
+				break;
+			}
+		}
 	}
 }, {
 	mapToColumnDefs(column: zk.Widget | null): ColumnDef[] {
