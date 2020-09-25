@@ -1630,6 +1630,10 @@ public class Aggrid<E> extends XulElement {
 		}
 	}
 
+	public void exportDataAsCsv() {
+		response("exportDataAsCsv", new AuInvoke(this, "exportDataAsCsv"));
+	}
+
 	private void onListDataChange(ListDataEvent event) {
 		final int eventType = event.getType();
 		switch (eventType) {

@@ -188,6 +188,9 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 		uuids.forEach(uuid => selectedUuids.add(uuid));
 		this._checkSelected();
 	},
+	exportDataAsCsv(): void {
+		this.gridApi().exportDataAsCsv();
+	},
 
 	_newDataSource(): Datasource {
 		let self = this;

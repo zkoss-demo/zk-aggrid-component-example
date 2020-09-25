@@ -28,6 +28,7 @@ Copyright (C) 2020 Potix Corporation. All Rights Reserved.
 			<toolbarbutton id="btnClrSel" label="model unselect all"/>
 			<toolbarbutton id="btnModelNew" label="model new"/>
 			<toolbarbutton id="btnModelNull" label="model null"/>
+			<toolbarbutton id="btnExport" label="export"/>
 			<toolbarbutton label="invalidate (Server)" onClick="ag.invalidate()"/>
 			<toolbarbutton label="invalidate (Client)" w:onClick="zk.$('$ag').rerender()"/>
 		</toolbar>
