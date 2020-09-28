@@ -48,7 +48,7 @@ Copyright (C) 2020 Potix Corporation. All Rights Reserved.
 			<ag-grid id="ag" hflex="1" vflex="1"  theme="ag-theme-material"
 			         pagination="true" suppressRowClickSelection="true"
 			         onRowDoubleClicked="Clients.log(event.node)" apply="org.zkoss.zkforge.aggrid.WinnerComposer"
-			         onCellContextMenu="Clients.log(event)">
+			         onCellContextMenu="Clients.log(event)" undoRedoCellEditing="true" undoRedoCellEditingLimit="5">
 				<ag-grid-column id="agc1" headerName="#" width="60" checkboxSelection="true" />
 				<ag-grid-column headerName="Athlete Details">
 					<ag-grid-column field="athlete" filter="true"/>

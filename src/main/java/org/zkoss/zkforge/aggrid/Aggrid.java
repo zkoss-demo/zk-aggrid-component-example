@@ -1609,6 +1609,28 @@ public class Aggrid<E> extends XulElement {
 			smartUpdate("theme", theme);
 		}
 	}
+
+	public boolean isUndoRedoCellEditing() {
+		return _auxinf != null && _auxinf.getBoolean(AuxInfo.Attr.UNDOREDOCELLEDITING);
+	}
+
+	public void setUndoRedoCellEditing(boolean undoRedoCellEditing) {
+		if (isUndoRedoCellEditing() != undoRedoCellEditing) {
+			initAuxInfo().setBoolean(AuxInfo.Attr.UNDOREDOCELLEDITING, undoRedoCellEditing);
+			smartUpdate("undoRedoCellEditing", undoRedoCellEditing);
+		}
+	}
+
+	public int getUndoRedoCellEditingLimit() {
+		return _auxinf != null ? _auxinf.undoRedoCellEditingLimit : 10;
+	}
+
+	public void setUndoRedoCellEditingLimit(int undoRedoCellEditingLimit) {
+		if (getUndoRedoCellEditingLimit() != undoRedoCellEditingLimit) {
+			initAuxInfo().undoRedoCellEditingLimit = undoRedoCellEditingLimit;
+			smartUpdate("undoRedoCellEditingLimit", undoRedoCellEditingLimit);
+		}
+	}
 	//#endregion
 
 	public ListModel<E> getModel() {
@@ -1840,6 +1862,9 @@ public class Aggrid<E> extends XulElement {
 			render(renderer, "suppressRowTransform", isSuppressRowTransform());
 			render(renderer, "serverSideSortingAlwaysResets", isServerSideSortingAlwaysResets());
 			render(renderer, "suppressBrowserResizeObserver", isSuppressBrowserResizeObserver());
+			render(renderer, "undoRedoCellEditing", isUndoRedoCellEditing());
+			if (_auxinf.undoRedoCellEditingLimit != 10)
+				render(renderer, "undoRedoCellEditingLimit", _auxinf.undoRedoCellEditingLimit);
 		}
 	}
 
@@ -2139,6 +2164,7 @@ public class Aggrid<E> extends XulElement {
 			SUPPRESSPROPERTYNAMESCHECK,
 			SUPPRESSROWTRANSFORM,
 			SUPPRESSBROWSERRESIZEOBSERVER,
+			UNDOREDOCELLEDITING
 		}
 
 		// Columns
@@ -2216,6 +2242,7 @@ public class Aggrid<E> extends XulElement {
 		// TODO context
 		// TODO allowContextMenuWithControlKey, statusBar
 		private int asyncTransactionWaitMillis = 50;
+		private int undoRedoCellEditingLimit = 10;
 
 		public boolean getBoolean(Attr attr) {
 			return this._bitset.get(attr.ordinal());
