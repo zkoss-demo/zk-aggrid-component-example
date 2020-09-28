@@ -6,7 +6,7 @@
       "dom",
       "es2015.collection"
     ],
-    "module": "none",
+    "module": "ES2015",
     "allowJs": true,
     "noEmit": true, // type checking only
     "strict": true,

@@ -9,11 +9,9 @@
 
 Copyright (C) 2020 Potix Corporation. All Rights Reserved.
  */
-(() => {
-interface ColumnDef {
-	children?: ColumnDef[];
-}
+import {ColDef} from '@ag-grid-community/core';
 
+(() => {
 aggrid.Aggridcolumn = zk.$extends(zk.Widget, {
 	$init() {
 		this.$supers('$init', arguments);
@@ -37,15 +35,15 @@ aggrid.Aggridcolumn = zk.$extends(zk.Widget, {
 	},
 	redraw(out: zk.Buffer): void {
 	},
-	toColDef(): ColumnDef {
-		let colDef: ColumnDef = this._generateColDef();
+	toColDef(): ColDef {
+		let colDef: ColDef = this._generateColDef();
 		if (this.nChildren) {
 			colDef.children = this.$class.mapToColumnDefs(this.firstChild);
 		}
 		return colDef;
 	},
-	_generateColDef(): ColumnDef {
-		let colDef: ColumnDef = zk.copy({}, this._colDef);
+	_generateColDef(): ColDef {
+		let colDef: ColDef = zk.copy({}, this._colDef);
 		delete colDef.children;
 		return colDef;
 	},
@@ -59,8 +57,8 @@ aggrid.Aggridcolumn = zk.$extends(zk.Widget, {
 		}
 	}
 }, {
-	mapToColumnDefs(column: zk.Widget | null): ColumnDef[] {
-		let columnDefs: ColumnDef[] = [];
+	mapToColumnDefs(column: zk.Widget | null): ColDef[] {
+		let columnDefs: ColDef[] = [];
 		for (; column; column = column.nextSibling) {
 			columnDefs.push(column.toColDef());
 		}

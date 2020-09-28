@@ -18,6 +18,7 @@
   "license": "LGPL-2.0-or-later",
   "private": true,
   "devDependencies": {
+    "@ag-grid-community/core": "^23.2.1",
     "@babel/core": "^7.4.5",
     "@babel/plugin-proposal-class-properties": "^7.4.4",
     "@babel/plugin-proposal-object-rest-spread": "^7.4.4",

@@ -9,40 +9,15 @@
 
 Copyright (C) 2020 Potix Corporation. All Rights Reserved.
  */
+import {
+	ColDef,
+	ColumnApi,
+	GridApi,
+	IDatasource,
+	IGetRowsParams
+} from '@ag-grid-community/core';
+
 (() => {
-// Infinite Scrolling Datasource
-interface Datasource {
-	// Callback the grid calls that you implement to fetch rows from the server. See below for params.
-	getRows(params: GetRowsParams): void;
-
-	// optional destroy method, if your datasource has state it needs to clean up
-	destroy?(): void;
-}
-
-// Params for the above Datasource.getRows()
-interface GetRowsParams {
-	// The first row index to get.
-	startRow: number;
-
-	// The first row index to NOT get.
-	endRow: number;
-
-	// If doing server-side sorting, contains the sort model
-	sortModel: any;
-
-	// If doing server-side filtering, contains the filter model
-	filterModel: any;
-
-	// The grid context object
-	context: any;
-
-	// Callback to call when the request is successful.
-	successCallback(rowsThisBlock: any[], lastRow?: number): void;
-
-	// Callback to call when the request fails.
-	failCallback(): void;
-}
-
 aggrid.Aggrid = zk.$extends(zul.Widget, {
 	_theme: 'ag-theme-alpine',
 
@@ -118,13 +93,13 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 	_getRowUuid(item): number {
 		return item['_zk_uuid'];
 	},
-	gridApi(): any {
+	gridApi(): GridApi {
 		return this._gridOptions.api;
 	},
-	columnApi(): any {
+	columnApi(): ColumnApi {
 		return this._gridOptions.columnApi;
 	},
-	_getColDefs(): Array<any> {
+	_getColDefs(): Array<ColDef> {
 		return this.nChildren ? aggrid.Aggridcolumn.mapToColumnDefs(this.firstChild) : [];
 	},
 	_updateColDefs(): void {
@@ -219,10 +194,10 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 		this.gridApi().exportDataAsCsv();
 	},
 
-	_newDataSource(): Datasource {
+	_newDataSource(): IDatasource {
 		let self = this;
-		return new class implements Datasource {
-			getRows(params: GetRowsParams): void {
+		return new class implements IDatasource {
+			getRows(params: IGetRowsParams): void {
 				let {startRow, endRow, sortModel, filterModel, successCallback, failCallback} = params;
 				try {
 					self.fire('onPaging', {startRow, endRow, sortModel, filterModel});
@@ -233,10 +208,10 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 			}
 		};
 	},
-	_emptyDataSource(): Datasource {
+	_emptyDataSource(): IDatasource {
 		let self = this;
-		return new class implements Datasource {
-			getRows(params: GetRowsParams): void {
+		return new class implements IDatasource {
+			getRows(params: IGetRowsParams): void {
 				self._selectedUuids.clear();
 				self.gridApi().showNoRowsOverlay();
 				params.successCallback([], 0);
