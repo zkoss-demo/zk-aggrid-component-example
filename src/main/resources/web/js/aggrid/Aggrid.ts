@@ -81,7 +81,6 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 	bind_(): void {
 		this.$supers(aggrid.Aggrid, 'bind_', arguments);
 		let gridOptions = this._gridOptions;
-		gridOptions.columnDefs = this._getColDefs();
 		gridOptions.getRowNodeId = this._getRowUuid;
 		gridOptions.rowModelType = 'infinite';
 		gridOptions.datasource = this._model ? this._newDataSource() : this._emptyDataSource();
@@ -129,6 +128,7 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 		return this.nChildren ? aggrid.Aggridcolumn.mapToColumnDefs(this.firstChild) : [];
 	},
 	_updateColDefs(): void {
+		this.gridApi().setColumnDefs([]);
 		this.gridApi().setColumnDefs(this._getColDefs());
 	},
 	_registerCallbacks(): void {
