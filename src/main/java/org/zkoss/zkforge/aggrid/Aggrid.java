@@ -438,6 +438,20 @@ public class Aggrid<E> extends XulElement {
 		}
 	}
 
+	public String getEditType() {
+		return _auxinf != null ? _auxinf.editType : null;
+	}
+
+	public void setEditType(String editType) {
+		if (!"fullRow".equals(editType) && editType != null) {
+			throw new WrongValueException("expected null or fullRow: " + editType);
+		}
+		if (!Objects.equals(getEditType(), editType)) {
+			initAuxInfo().editType = editType;
+			smartUpdate("editType", editType);
+		}
+	}
+
 	public boolean isEnableCellChangeFlash() {
 		return _auxinf != null && _auxinf.getBoolean(AuxInfo.Attr.ENABLECELLCHANGEFLASH);
 	}
@@ -1692,6 +1706,7 @@ public class Aggrid<E> extends XulElement {
 			render(renderer, "suppressMoveWhenRowDragging", isSuppressMoveWhenRowDragging());
 			render(renderer, "singleClickEdit", isSingleClickEdit());
 			render(renderer, "suppressClickEdit", isSuppressClickEdit());
+			render(renderer, "editType", getEditType());
 			render(renderer, "enableCellChangeFlash", isEnableCellChangeFlash());
 			if (_auxinf.cellFlashDelay != 500)
 				render(renderer, "cellFlashDelay", _auxinf.cellFlashDelay);
@@ -2136,7 +2151,7 @@ public class Aggrid<E> extends XulElement {
 		// TODO multiSortKey
 		// Selection
 		private String rowSelection;
-		// TODO editType
+		private String editType;
 		private int cellFlashDelay = 500;
 		private int cellFadeDelay = 1000;
 		// Headers

@@ -20,6 +20,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import org.zkoss.json.JSONObject;
+import org.zkoss.lang.reflect.Fields;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
 import org.zkoss.zk.ui.util.Clients;
@@ -94,8 +96,12 @@ public class WinnerComposer extends SelectorComposer<Aggrid<Winner>> {
 	}
 
 	@Listen("onCellValueChanged = #ag")
-	public void inlineEditAge(AgGridEvent<Winner> event) {
-		event.getNode().setAge(Integer.parseInt((String) event.get("newValue")));
-		Notification.show("Modified");
+	public void inlineEditAge(AgGridEvent<Winner> event) throws NoSuchMethodException {
+		final Winner node = event.getNode();
+		final JSONObject colDef = (JSONObject) event.get("colDef");
+		if (colDef != null) {
+			Fields.setByCompound(node, (String) colDef.get("field"), event.get("value"), true);
+			Notification.show("Modified");
+		}
 	}
 }
