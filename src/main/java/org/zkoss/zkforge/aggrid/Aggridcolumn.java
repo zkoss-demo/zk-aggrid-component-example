@@ -784,7 +784,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 		if (_auxinf != null) {
 			render(renderer, "headerName", getHeaderName());
 			render(renderer, "columnGroupShow", getColumnGroupShow());
-			render(renderer, "headerClass", getHeaderName());
+			render(renderer, "headerClass", getHeaderClass());
 			render(renderer, "toolPanelClass", getToolPanelClass());
 			render(renderer, "suppressColumnsToolPanel", isSuppressColumnsToolPanel());
 			render(renderer, "suppressFiltersToolPanel", isSuppressFiltersToolPanel());
