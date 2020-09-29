@@ -28,6 +28,11 @@ public class AggridDefaultColumn extends Aggridcolumn<Object> {
 	}
 
 	@Override
+	protected void initSortComparator() {
+		// do nothing
+	}
+
+	@Override
 	protected boolean isChildable() {
 		return false;
 	}

@@ -17,6 +17,7 @@ import java.util.BitSet;
 import java.util.Comparator;
 
 import org.zkoss.lang.Objects;
+import org.zkoss.lang.Strings;
 import org.zkoss.zk.ui.AbstractComponent;
 import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
@@ -854,9 +855,9 @@ public class Aggridcolumn<E> extends AbstractComponent {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void initSortComparator() {
-		if (isSortable()) {
-			String field = getField();
+	protected void initSortComparator() {
+		String field = getField();
+		if (!Strings.isEmpty(field)) {
 			if (getSortAscending() == null)
 				setSortAscending(new FieldComparator(field, true));
 			if (getSortDescending() == null)
