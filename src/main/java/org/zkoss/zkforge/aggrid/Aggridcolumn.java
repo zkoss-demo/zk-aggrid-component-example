@@ -421,7 +421,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 
 	public void setCheckboxSelection(boolean checkboxSelection) {
 		if (isCheckboxSelection() != checkboxSelection) {
-			_auxinf.setBoolean(AuxInfo.Attr.CHECKBOXSELECTION, checkboxSelection);
+			initAuxInfo().setBoolean(AuxInfo.Attr.CHECKBOXSELECTION, checkboxSelection);
 			smartUpdate("checkboxSelection", checkboxSelection);
 		}
 	}
@@ -432,7 +432,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 
 	public void setHeaderCheckboxSelection(boolean headerCheckboxSelection) {
 		if (isHeaderCheckboxSelection() != headerCheckboxSelection) {
-			_auxinf.setBoolean(AuxInfo.Attr.HEADERCHECKBOXSELECTION, headerCheckboxSelection);
+			initAuxInfo().setBoolean(AuxInfo.Attr.HEADERCHECKBOXSELECTION, headerCheckboxSelection);
 			smartUpdate("headerCheckboxSelection", headerCheckboxSelection);
 		}
 	}
@@ -443,7 +443,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 
 	public void setHeaderCheckboxSelectionFilteredOnly(boolean headerCheckboxSelectionFilteredOnly) {
 		if (isHeaderCheckboxSelectionFilteredOnly() != headerCheckboxSelectionFilteredOnly) {
-			_auxinf.setBoolean(AuxInfo.Attr.HEADERCHECKBOXSELECTIONFILTEREDONLY, headerCheckboxSelectionFilteredOnly);
+			initAuxInfo().setBoolean(AuxInfo.Attr.HEADERCHECKBOXSELECTIONFILTEREDONLY, headerCheckboxSelectionFilteredOnly);
 			smartUpdate("headerCheckboxSelectionFilteredOnly", headerCheckboxSelectionFilteredOnly);
 		}
 	}
@@ -454,7 +454,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 
 	public void setRowDrag(boolean rowDrag) {
 		if (isRowDrag() != rowDrag) {
-			_auxinf.setBoolean(AuxInfo.Attr.ROWDRAG, rowDrag);
+			initAuxInfo().setBoolean(AuxInfo.Attr.ROWDRAG, rowDrag);
 			smartUpdate("rowDrag", rowDrag);
 		}
 	}
@@ -476,7 +476,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 
 	public void setDndSource(boolean dndSource) {
 		if (isDndSource() != dndSource) {
-			_auxinf.setBoolean(AuxInfo.Attr.DNDSOURCE, dndSource);
+			initAuxInfo().setBoolean(AuxInfo.Attr.DNDSOURCE, dndSource);
 			smartUpdate("dndSource", dndSource);
 		}
 	}
@@ -509,7 +509,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 
 	public void setEditable(boolean editable) {
 		if (isEditable() != editable) {
-			_auxinf.setBoolean(AuxInfo.Attr.EDITABLE, editable);
+			initAuxInfo().setBoolean(AuxInfo.Attr.EDITABLE, editable);
 			smartUpdate("editable", editable);
 		}
 	}
@@ -568,7 +568,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 
 	public void setUnSortIcon(boolean unSortIcon) {
 		if (isUnSortIcon() != unSortIcon) {
-			_auxinf.setBoolean(AuxInfo.Attr.UNSORTICON, unSortIcon);
+			initAuxInfo().setBoolean(AuxInfo.Attr.UNSORTICON, unSortIcon);
 			smartUpdate("unSortIcon", unSortIcon);
 		}
 	}
@@ -579,7 +579,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 
 	public void setEnableRowGroup(boolean enableRowGroup) {
 		if (isEnableRowGroup() != enableRowGroup) {
-			_auxinf.setBoolean(AuxInfo.Attr.ENABLEROWGROUP, enableRowGroup);
+			initAuxInfo().setBoolean(AuxInfo.Attr.ENABLEROWGROUP, enableRowGroup);
 			smartUpdate("enableRowGroup", enableRowGroup);
 		}
 	}
@@ -590,7 +590,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 
 	public void setEnablePivot(boolean enablePivot) {
 		if (isEnablePivot() != enablePivot) {
-			_auxinf.setBoolean(AuxInfo.Attr.ENABLEPIVOT, enablePivot);
+			initAuxInfo().setBoolean(AuxInfo.Attr.ENABLEPIVOT, enablePivot);
 			smartUpdate("enablePivot", enablePivot);
 		}
 	}
@@ -601,7 +601,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 
 	public void setPivotTotals(boolean pivotTotals) {
 		if (isPivotTotals() != pivotTotals) {
-			_auxinf.setBoolean(AuxInfo.Attr.PIVOTTOTALS, pivotTotals);
+			initAuxInfo().setBoolean(AuxInfo.Attr.PIVOTTOTALS, pivotTotals);
 			smartUpdate("pivotTotals", pivotTotals);
 		}
 	}
@@ -612,7 +612,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 
 	public void setEnableValue(boolean enableValue) {
 		if (isEnableValue() != enableValue) {
-			_auxinf.setBoolean(AuxInfo.Attr.ENABLEVALUE, enableValue);
+			initAuxInfo().setBoolean(AuxInfo.Attr.ENABLEVALUE, enableValue);
 			smartUpdate("enableValue", enableValue);
 		}
 	}
@@ -623,7 +623,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 
 	public void setEnableCellChangeFlash(boolean enableCellChangeFlash) {
 		if (isEnableCellChangeFlash() != enableCellChangeFlash) {
-			_auxinf.setBoolean(AuxInfo.Attr.ENABLECELLCHANGEFLASH, enableCellChangeFlash);
+			initAuxInfo().setBoolean(AuxInfo.Attr.ENABLECELLCHANGEFLASH, enableCellChangeFlash);
 			smartUpdate("enableCellChangeFlash", enableCellChangeFlash);
 		}
 	}
@@ -634,7 +634,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 
 	public void setSuppressMenu(boolean suppressMenu) {
 		if (isSuppressMenu() != suppressMenu) {
-			_auxinf.setBoolean(AuxInfo.Attr.SUPPRESSMENU, suppressMenu);
+			initAuxInfo().setBoolean(AuxInfo.Attr.SUPPRESSMENU, suppressMenu);
 			smartUpdate("suppressMenu", suppressMenu);
 		}
 	}
@@ -645,7 +645,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 
 	public void setSuppressSizeToFit(boolean suppressSizeToFit) {
 		if (isSuppressSizeToFit() != suppressSizeToFit) {
-			_auxinf.setBoolean(AuxInfo.Attr.SUPPRESSSIZETOFIT, suppressSizeToFit);
+			initAuxInfo().setBoolean(AuxInfo.Attr.SUPPRESSSIZETOFIT, suppressSizeToFit);
 			smartUpdate("suppressSizeToFit", suppressSizeToFit);
 		}
 	}
@@ -656,7 +656,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 
 	public void setSuppressMovable(boolean suppressMovable) {
 		if (isSuppressMovable() != suppressMovable) {
-			_auxinf.setBoolean(AuxInfo.Attr.SUPPRESSMOVABLE, suppressMovable);
+			initAuxInfo().setBoolean(AuxInfo.Attr.SUPPRESSMOVABLE, suppressMovable);
 			smartUpdate("suppressMovable", suppressMovable);
 		}
 	}
@@ -667,7 +667,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 
 	public void setSuppressNavigable(boolean suppressNavigable) {
 		if (isSuppressNavigable() != suppressNavigable) {
-			_auxinf.setBoolean(AuxInfo.Attr.SUPPRESSNAVIGABLE, suppressNavigable);
+			initAuxInfo().setBoolean(AuxInfo.Attr.SUPPRESSNAVIGABLE, suppressNavigable);
 			smartUpdate("suppressNavigable", suppressNavigable);
 		}
 	}
@@ -678,7 +678,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 
 	public void setSuppressCellFlash(boolean suppressCellFlash) {
 		if (isSuppressCellFlash() != suppressCellFlash) {
-			_auxinf.setBoolean(AuxInfo.Attr.SUPPRESSCELLFLASH, suppressCellFlash);
+			initAuxInfo().setBoolean(AuxInfo.Attr.SUPPRESSCELLFLASH, suppressCellFlash);
 			smartUpdate("suppressCellFlash", suppressCellFlash);
 		}
 	}
@@ -689,7 +689,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 
 	public void setAutoHeight(boolean autoHeight) {
 		if (isAutoHeight() != autoHeight) {
-			_auxinf.setBoolean(AuxInfo.Attr.AUTOHEIGHT, autoHeight);
+			initAuxInfo().setBoolean(AuxInfo.Attr.AUTOHEIGHT, autoHeight);
 			smartUpdate("autoHeight", autoHeight);
 		}
 	}
@@ -700,7 +700,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 
 	public void setSingleClickEdit(boolean singleClickEdit) {
 		if (isSingleClickEdit() != singleClickEdit) {
-			_auxinf.setBoolean(AuxInfo.Attr.SINGLECLICKEDIT, singleClickEdit);
+			initAuxInfo().setBoolean(AuxInfo.Attr.SINGLECLICKEDIT, singleClickEdit);
 			smartUpdate("singleClickEdit", singleClickEdit);
 		}
 	}
@@ -722,7 +722,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 
 	public void setMarryChildren(boolean marryChildren) {
 		if (isMarryChildren() != marryChildren) {
-			_auxinf.setBoolean(AuxInfo.Attr.MARRYCHILDREN, marryChildren);
+			initAuxInfo().setBoolean(AuxInfo.Attr.MARRYCHILDREN, marryChildren);
 			smartUpdate("marryChildren", marryChildren);
 		}
 	}
@@ -733,7 +733,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 
 	public void setOpenByDefault(boolean openByDefault) {
 		if (isOpenByDefault() != openByDefault) {
-			_auxinf.setBoolean(AuxInfo.Attr.OPENBYDEFAULT, openByDefault);
+			initAuxInfo().setBoolean(AuxInfo.Attr.OPENBYDEFAULT, openByDefault);
 			smartUpdate("openByDefault", openByDefault);
 		}
 	}
@@ -744,7 +744,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 
 	public void setRowGroup(boolean rowGroup) {
 		if (isRowGroup() != rowGroup) {
-			_auxinf.setBoolean(AuxInfo.Attr.ROWGROUP, rowGroup);
+			initAuxInfo().setBoolean(AuxInfo.Attr.ROWGROUP, rowGroup);
 			smartUpdate("rowGroup", rowGroup);
 		}
 	}
@@ -755,7 +755,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 
 	public void setPivot(boolean pivot) {
 		if (isPivot() != pivot) {
-			_auxinf.setBoolean(AuxInfo.Attr.PIVOT, pivot);
+			initAuxInfo().setBoolean(AuxInfo.Attr.PIVOT, pivot);
 			smartUpdate("pivot", pivot);
 		}
 	}
