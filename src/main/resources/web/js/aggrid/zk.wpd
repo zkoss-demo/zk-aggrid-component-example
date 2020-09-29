@@ -3,4 +3,5 @@
     <script src="ext/ag-grid-community.js" />
 	<widget name="Aggrid" />
 	<widget name="Aggridcolumn" />
+	<widget name="Aggriddefaultcolumn" />
 </package>

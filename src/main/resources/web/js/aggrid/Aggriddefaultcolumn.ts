@@ -1,19 +1,19 @@
-/* Aggridcolumn.ts
+/* Aggriddefaultcolumn.ts
 
 	Purpose:
-
+		
 	Description:
-
+		
 	History:
-		Fri Jun 19 14:36:45 CST 2020, Created by rudyhuang
+		Tue Sep 29 16:28:36 CST 2020, Created by rudyhuang
 
 Copyright (C) 2020 Potix Corporation. All Rights Reserved.
- */
+*/
 // @ts-ignore
 import {ColDef} from '@ag-grid-community/core';
 
 (() => {
-aggrid.Aggridcolumn = zk.$extends(zk.Widget, {
+aggrid.Aggriddefaultcolumn = zk.$extends(zk.Widget, {
 	$init() {
 		this.$supers('$init', arguments);
 		this._colDef = {};
@@ -38,16 +38,7 @@ aggrid.Aggridcolumn = zk.$extends(zk.Widget, {
 	redraw(out: zk.Buffer): void {
 	},
 	toColDef(): ColDef {
-		let colDef: ColDef = this._generateColDef();
-		if (this.nChildren) {
-			colDef.children = this.$class.mapToColumnDefs(this.firstChild);
-		}
-		return colDef;
-	},
-	_generateColDef(): ColDef {
-		let colDef: ColDef = zk.copy({}, this._colDef);
-		delete colDef.children;
-		return colDef;
+		return zk.copy({}, this._colDef);
 	},
 	_updateColDef(): void {
 		let parent = this.parent
@@ -57,15 +48,6 @@ aggrid.Aggridcolumn = zk.$extends(zk.Widget, {
 				break;
 			}
 		}
-	}
-}, {
-	mapToColumnDefs(column: zk.Widget | null): ColDef[] {
-		let columnDefs: ColDef[] = [];
-		for (; column; column = column.nextSibling) {
-			if (aggrid.Aggridcolumn.isInstance(column))
-				columnDefs.push(column.toColDef());
-		}
-		return columnDefs;
 	}
 });
 })();

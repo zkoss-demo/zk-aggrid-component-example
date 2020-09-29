@@ -49,10 +49,11 @@ Copyright (C) 2020 Potix Corporation. All Rights Reserved.
 			         pagination="true" suppressRowClickSelection="true"
 			         onRowDoubleClicked="Clients.log(event.node)" apply="org.zkoss.zkforge.aggrid.WinnerComposer"
 			         onCellContextMenu="Clients.log(event)" undoRedoCellEditing="true" undoRedoCellEditingLimit="5">
-				<ag-grid-column id="agc1" headerName="#" width="60" checkboxSelection="true" />
+				<ag-grid-default-column editable="true" sortable="true" filter="true" flex="1"/>
+				<ag-grid-column id="agc1" headerName="#" flex="0" width="60" checkboxSelection="true" />
 				<ag-grid-column headerName="Athlete Details">
-					<ag-grid-column field="athlete" filter="true"/>
-					<ag-grid-column field="age" filter="agNumberColumnFilter" sortable="true" editable="true"/>
+					<ag-grid-column field="athlete"/>
+					<ag-grid-column field="age" filter="agNumberColumnFilter"/>
 					<ag-grid-column field="country" headerTooltip="The country the athlete represented"/>
 				</ag-grid-column>
 				<ag-grid-column headerName="Olympic">
@@ -61,7 +62,7 @@ Copyright (C) 2020 Potix Corporation. All Rights Reserved.
 				</ag-grid-column>
 				<ag-grid-column headerName="Medals">
 					<ag-grid-column field="sport" headerTooltip="The sport the medal was for"/>
-					<ag-grid-column field="total" headerTooltip="The total number of medals" filter="agNumberColumnFilter" columnGroupShow="closed" sortable="true"/>
+					<ag-grid-column field="total" headerTooltip="The total number of medals" filter="agNumberColumnFilter" columnGroupShow="closed"/>
 					<ag-grid-column field="gold" headerTooltip="How many gold medals" filter="agNumberColumnFilter" columnGroupShow="open"/>
 					<ag-grid-column field="silver" headerTooltip="How many silver medals" filter="agNumberColumnFilter" columnGroupShow="open"/>
 					<ag-grid-column field="bronze" headerTooltip="How many bronze medals" filter="agNumberColumnFilter" columnGroupShow="open"/>

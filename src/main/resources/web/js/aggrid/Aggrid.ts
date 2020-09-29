@@ -29,6 +29,7 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 			'unselected': []
 		};
 		this._selectedUuids = new Set();
+		// @ts-ignore
 		agGrid.PropertyKeys.ALL_PROPERTIES.forEach(prop => {
 			Object.defineProperty(this, prop,{
 				configurable: true, // some properties are multi-type (e.g: string and function), possible duplicated
@@ -55,10 +56,15 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 	},
 	bind_(): void {
 		this.$supers(aggrid.Aggrid, 'bind_', arguments);
-		let gridOptions = this._gridOptions;
+		let gridOptions = this._gridOptions,
+			defaultColDef = this._getDefaultColDef();
+		if (defaultColDef) {
+			gridOptions.defaultColDef = defaultColDef;
+		}
 		gridOptions.getRowNodeId = this._getRowUuid;
 		gridOptions.rowModelType = 'infinite';
 		gridOptions.datasource = this._model ? this._newDataSource() : this._emptyDataSource();
+		// @ts-ignore
 		new agGrid.Grid(this.$n(), gridOptions);
 		this._registerCallbacks();
 		zWatch.listen({onResponse: this});
@@ -102,9 +108,17 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 	_getColDefs(): Array<ColDef> {
 		return this.nChildren ? aggrid.Aggridcolumn.mapToColumnDefs(this.firstChild) : [];
 	},
+	_getDefaultColDef(): ColDef | null {
+		for (let child = this.firstChild; child; child = child.nextSibling) {
+			if (aggrid.Aggriddefaultcolumn.isInstance(child))
+				return child.toColDef();
+		}
+		return null;
+	},
 	_updateColDefs(): void {
-		this.gridApi().setColumnDefs([]);
-		this.gridApi().setColumnDefs(this._getColDefs());
+		let api = this.gridApi();
+		api.setColumnDefs([]);
+		api.setColumnDefs(this._getColDefs());
 	},
 	_registerCallbacks(): void {
 		this.gridApi().addGlobalListener(this.proxy(this._handleEvents));

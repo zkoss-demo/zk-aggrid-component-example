@@ -21,4 +21,9 @@
 		<component-class>org.zkoss.zkforge.aggrid.Aggridcolumn</component-class>
 		<widget-class>aggrid.Aggridcolumn</widget-class>
 	</component>
+	<component>
+		<component-name>ag-grid-default-column</component-name>
+		<component-class>org.zkoss.zkforge.aggrid.AggridDefaultColumn</component-class>
+		<widget-class>aggrid.Aggriddefaultcolumn</widget-class>
+	</component>
 </language-addon>

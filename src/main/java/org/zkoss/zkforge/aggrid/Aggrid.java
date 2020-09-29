@@ -134,6 +134,7 @@ public class Aggrid<E> extends XulElement {
 	/** whether to ignore ListDataEvent.SELECTION_CHANGED */
 	private transient boolean _ignoreDataSelectionEvent;
 	private final ListDataListener _modelListDataListener = this::onListDataChange;
+	private AggridDefaultColumn _defaultColDef;
 
 	//#region properties
 	public boolean isSuppressAutoSize() {
@@ -2022,7 +2023,28 @@ public class Aggrid<E> extends XulElement {
 	public void beforeChildAdded(Component child, Component insertBefore) {
 		if (!(child instanceof Aggridcolumn))
 			throw new UiException("Unsupported child: " + child);
+		if (child instanceof AggridDefaultColumn && _defaultColDef != null && _defaultColDef != child)
+			throw new UiException("Only one default column definition is allowed: " + this);
 		super.beforeChildAdded(child, insertBefore);
+	}
+
+	@Override
+	public boolean insertBefore(Component newChild, Component refChild) {
+		if (newChild instanceof AggridDefaultColumn) {
+			if (super.insertBefore(newChild, refChild)) {
+				_defaultColDef = (AggridDefaultColumn) newChild;
+				return true;
+			}
+		} else {
+			return super.insertBefore(newChild, refChild);
+		}
+		return false;
+	}
+
+	@Override
+	public void onChildRemoved(Component child) {
+		super.onChildRemoved(child);
+		if (_defaultColDef == child) _defaultColDef = null;
 	}
 
 	@Override
