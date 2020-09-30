@@ -23,6 +23,7 @@ import org.zkoss.zk.ui.Component;
 import org.zkoss.zk.ui.UiException;
 import org.zkoss.zk.ui.WrongValueException;
 import org.zkoss.zk.ui.sys.ContentRenderer;
+import org.zkoss.zkforge.aggrid.filter.ColumnFilters;
 import org.zkoss.zul.FieldComparator;
 import org.zkoss.zul.GroupComparator;
 
@@ -255,6 +256,20 @@ public class Aggridcolumn<E> extends AbstractComponent {
 		if (!Objects.equals(getFilter(), filter)) {
 			initAuxInfo()._filter = filter;
 			smartUpdate("filter", filter);
+		}
+	}
+
+	public FilterParams getFilterParams() {
+		return _auxinf != null ? _auxinf._filterParams : null; // TODO generate an empty object
+	}
+
+	public void setFilterParams(FilterParams filterParams) {
+		if (!Objects.equals(getFilterParams(), filterParams)) {
+			initAuxInfo()._filterParams = filterParams;
+			smartUpdate("filterParams", filterParams);
+			String field = getField();
+			if (!Strings.isEmpty(field))
+				ColumnFilters.putFilterParams(field, filterParams);
 		}
 	}
 
@@ -782,6 +797,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 	protected void renderProperties(ContentRenderer renderer) throws IOException {
 		super.renderProperties(renderer);
 		initSortComparator();
+		initFilterParams();
 		if (_auxinf != null) {
 			render(renderer, "headerName", getHeaderName());
 			render(renderer, "columnGroupShow", getColumnGroupShow());
@@ -804,6 +820,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 				render(renderer, "filter", true);
 			else
 				render(renderer, "filter", _auxinf._filter);
+			render(renderer, "filterParams", _auxinf._filterParams);
 			render(renderer, "floatingFilter", isFloatingFilter());
 			render(renderer, "floatingFilterComponent", getFloatingFilterComponent());
 			render(renderer, "hide", isHide());
@@ -862,6 +879,13 @@ public class Aggridcolumn<E> extends AbstractComponent {
 				setSortAscending(new FieldComparator(field, true));
 			if (getSortDescending() == null)
 				setSortDescending(new FieldComparator(field, false));
+		}
+	}
+
+	protected void initFilterParams() {
+		String field = getField();
+		if (!Strings.isEmpty(field)) {
+			ColumnFilters.putFilterParams(field, getFilterParams());
 		}
 	}
 
@@ -935,7 +959,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 		private int _maxWidth = -1;
 		private int _flex = -1;
 		private String _filter;
-		// TODO filterParams
+		private FilterParams _filterParams;
 		private String _floatingFilterComponent;
 		// TODO floatingFilterComponentParams
 		private String _pinned;

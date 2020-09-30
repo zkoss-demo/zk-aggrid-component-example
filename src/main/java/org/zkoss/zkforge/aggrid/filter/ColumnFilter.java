@@ -15,6 +15,7 @@ import java.util.Objects;
 
 import org.zkoss.lang.reflect.Fields;
 import org.zkoss.zk.ui.UiException;
+import org.zkoss.zkforge.aggrid.FilterParams;
 
 /**
  * @author rudyhuang
@@ -28,18 +29,23 @@ public class ColumnFilter<T> implements Filter<T> {
 		_filter = filter;
 	}
 
-	@SuppressWarnings("unchecked")
-	private T getValue(Object data) throws NoSuchMethodException {
-		return (T) Fields.getByCompound(data, _column);
+	@Override
+	public boolean test(T data) {
+		return test(data, ColumnFilters.getFilterParams(_column));
 	}
 
 	@Override
-	public boolean test(T data) {
+	public boolean test(T data, FilterParams filterParams) {
 		try {
-			return _filter.test(getValue(data));
+			return _filter.test(getValue(data), filterParams);
 		} catch (NoSuchMethodException e) {
 			throw UiException.Aide.wrap(e);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private T getValue(Object data) throws NoSuchMethodException {
+		return (T) Fields.getByCompound(data, _column);
 	}
 
 	@Override

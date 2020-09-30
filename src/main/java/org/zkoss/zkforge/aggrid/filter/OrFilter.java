@@ -11,6 +11,8 @@ Copyright (C) 2020 Potix Corporation. All Rights Reserved.
 */
 package org.zkoss.zkforge.aggrid.filter;
 
+import org.zkoss.zkforge.aggrid.FilterParams;
+
 /**
  * @author rudyhuang
  */
@@ -20,8 +22,8 @@ public class OrFilter<T> extends CompositeFilter<T> {
 	}
 
 	@Override
-	public boolean test(T data) {
-		return _condition1.or(_condition2).test(data);
+	public boolean test(T data, FilterParams filterParams) {
+		return _condition1.test(data, filterParams) || _condition2.test(data, filterParams);
 	}
 
 	@Override

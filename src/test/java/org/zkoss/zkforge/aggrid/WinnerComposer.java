@@ -13,6 +13,7 @@ package org.zkoss.zkforge.aggrid;
 
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,6 +25,7 @@ import org.zkoss.json.JSONObject;
 import org.zkoss.lang.reflect.Fields;
 import org.zkoss.zk.ui.select.SelectorComposer;
 import org.zkoss.zk.ui.select.annotation.Listen;
+import org.zkoss.zk.ui.select.annotation.Wire;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zk.ui.util.Notification;
 import org.zkoss.zul.ListModel;
@@ -34,6 +36,8 @@ import org.zkoss.zul.ListModelList;
  */
 public class WinnerComposer extends SelectorComposer<Aggrid<Winner>> {
 	private Aggrid<Winner> comp;
+	@Wire
+	private Aggridcolumn<Winner> agc2;
 	private ListModelList<Winner> winnerModel;
 
 	@Override
@@ -54,6 +58,12 @@ public class WinnerComposer extends SelectorComposer<Aggrid<Winner>> {
 		winnerModel.addToSelection(winnerModel.getElementAt(0));
 		winnerModel.addToSelection(winnerModel.getElementAt(100));
 		winnerModel.addToSelection(winnerModel.getElementAt(200));
+
+		final FilterParams params = new FilterParams();
+		agc2.setFilterParams(params);
+		params.setButtons(Arrays.asList("apply", "reset"));
+		params.setInRangeInclusive(true);
+		params.setCloseOnApply(true);
 	}
 
 	@Listen("onClick = #btnCurrSel")

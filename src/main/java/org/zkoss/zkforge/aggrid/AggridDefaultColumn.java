@@ -33,6 +33,12 @@ public class AggridDefaultColumn extends Aggridcolumn<Object> {
 	}
 
 	@Override
+	protected void initFilterParams() {
+		// FIXME: FilterParams of defaultColDef, should be used if none was provided
+		// do nothing
+	}
+
+	@Override
 	protected boolean isChildable() {
 		return false;
 	}

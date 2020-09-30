@@ -13,6 +13,8 @@ package org.zkoss.zkforge.aggrid.filter;
 
 import java.util.Objects;
 
+import org.zkoss.zkforge.aggrid.FilterParams;
+
 /**
  * @author rudyhuang
  */
@@ -26,27 +28,29 @@ public class TextFilter implements Filter<String> {
 	}
 
 	@Override
-	public boolean test(String data) {
+	public boolean test(String data, FilterParams filterParams) {
+		boolean caseSensitive = filterParams != null && filterParams.isCaseSensitive();
+
 		switch (_type) {
 			case CONTAINS:
-				return filterContains(data);
+				return filterContains(data, caseSensitive);
 			case NOT_CONTAINS:
-				return !filterContains(data);
+				return !filterContains(data, caseSensitive);
 			case EQUALS:
-				return filterEquals(data);
+				return filterEquals(data, caseSensitive);
 			case NOT_EQUAL:
-				return !filterEquals(data);
+				return !filterEquals(data, caseSensitive);
 			case STARTS_WITH:
-				return startsWithIgnoreCase(data, _filter);
+				return data != null && (caseSensitive ? data.startsWith(_filter) : startsWithIgnoreCase(data, _filter));
 			case ENDS_WITH:
-				return endsWithIgnoreCase(data, _filter);
+				return data != null && (caseSensitive ? data.endsWith(_filter) : endsWithIgnoreCase(data, _filter));
 			default: // no filter
 				return true;
 		}
 	}
 
-	private boolean filterContains(String data) {
-		return containsIgnoreCase(data, _filter);
+	private boolean filterContains(String data, boolean caseSensitive) {
+		return data != null && (caseSensitive ? data.contains(_filter) : containsIgnoreCase(data, _filter));
 	}
 
 	private static boolean containsIgnoreCase(String str, String searchStr) {
@@ -59,6 +63,10 @@ public class TextFilter implements Filter<String> {
 				return true;
 		}
 		return false;
+	}
+
+	private boolean filterEquals(String data, boolean caseSensitive) {
+		return data != null && (caseSensitive ? data.equals(_filter) : data.equalsIgnoreCase(_filter));
 	}
 
 	private static boolean startsWithIgnoreCase(String str, String prefix) {
@@ -80,11 +88,6 @@ public class TextFilter implements Filter<String> {
 		if (pos < 0)
 			return false;
 		return str.regionMatches(true, pos, suffix, 0, length);
-	}
-
-	private boolean filterEquals(String data) {
-		// TODO: implement caseSensitive
-		return data != null && data.equalsIgnoreCase(_filter);
 	}
 
 	@Override

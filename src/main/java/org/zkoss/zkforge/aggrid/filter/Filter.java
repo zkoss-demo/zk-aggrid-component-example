@@ -2,6 +2,8 @@ package org.zkoss.zkforge.aggrid.filter;
 
 import java.util.function.Predicate;
 
+import org.zkoss.zkforge.aggrid.FilterParams;
+
 /**
  * @author rudyhuang
  */
@@ -25,5 +27,16 @@ public interface Filter<T> extends Predicate<T> {
 	 * @param data the data
 	 * @return true if the data is kept
 	 */
-	boolean test(T data);
+	default boolean test(T data) {
+		return test(data, null);
+	}
+
+	/**
+	 * To test each data in a model.
+	 *
+	 * @param data the data
+	 * @param filterParams the filter setting, might be null
+	 * @return true if the data is kept
+	 */
+	boolean test(T data, FilterParams filterParams);
 }

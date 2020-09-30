@@ -14,14 +14,27 @@ package org.zkoss.zkforge.aggrid.filter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 import org.zkoss.json.JSONObject;
+import org.zkoss.util.CacheMap;
+import org.zkoss.zkforge.aggrid.FilterParams;
 
 /**
  * @author rudyhuang
  */
 public class ColumnFilters {
+	private static final Map<String, FilterParams> FILTER_PARAMS_CACHE = new CacheMap<>();
+
 	private ColumnFilters() {
+	}
+
+	public static FilterParams getFilterParams(String column) {
+		return FILTER_PARAMS_CACHE.get(column);
+	}
+
+	public static void putFilterParams(String column, FilterParams filterParams) {
+		FILTER_PARAMS_CACHE.put(column, filterParams);
 	}
 
 	public static Filter<?> build(String column, JSONObject config) {

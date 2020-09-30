@@ -13,6 +13,8 @@ package org.zkoss.zkforge.aggrid.filter;
 
 import java.util.Objects;
 
+import org.zkoss.zkforge.aggrid.FilterParams;
+
 /**
  * @author rudyhuang
  */
@@ -32,22 +34,35 @@ public class NumberFilter implements Filter<Number> {
 	}
 
 	@Override
-	public boolean test(Number data) {
+	public boolean test(Number data, FilterParams filterParams) {
+		boolean inRangeInclusive = filterParams != null && filterParams.isInRangeInclusive();
+		boolean includeBlanksInEquals = filterParams != null && filterParams.isIncludeBlanksInEquals();
+		boolean includeBlanksInLessThan = filterParams != null && filterParams.isIncludeBlanksInLessThan();
+		boolean includeBlanksInGreaterThan = filterParams != null && filterParams.isIncludeBlanksInGreaterThan();
+
 		switch (_type) {
 			case EQUALS:
+				if (includeBlanksInEquals && data == null) return true;
 				return filterEquals(data);
 			case NOT_EQUAL:
+				if (includeBlanksInEquals && data == null) return true;
 				return !filterEquals(data);
 			case LESS_THAN:
+				if (includeBlanksInLessThan && data == null) return true;
 				return compareTo(_filter, data) > 0;
 			case LESS_THAN_OR_EQUAL:
+				if (includeBlanksInLessThan && data == null) return true;
 				return compareTo(_filter, data) >= 0;
 			case GREATER_THAN:
+				if (includeBlanksInGreaterThan && data == null) return true;
 				return compareTo(_filter, data) < 0;
 			case GREATER_THAN_OR_EQUAL:
+				if (includeBlanksInGreaterThan && data == null) return true;
 				return compareTo(_filter, data) <= 0;
-			case IN_RANGE: // TODO: implement inRangeInclusive
-				return compareTo(_filter, data) < 0 && compareTo(_filterTo, data) > 0;
+			case IN_RANGE:
+				return inRangeInclusive
+						? compareTo(_filter, data) <= 0 && compareTo(_filterTo, data) >= 0
+						: compareTo(_filter, data) < 0 && compareTo(_filterTo, data) > 0;
 			default: // no filter
 				return true;
 		}

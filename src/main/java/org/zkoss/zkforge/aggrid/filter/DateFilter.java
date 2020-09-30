@@ -14,6 +14,8 @@ package org.zkoss.zkforge.aggrid.filter;
 import java.util.Date;
 import java.util.Objects;
 
+import org.zkoss.zkforge.aggrid.FilterParams;
+
 /**
  * @author rudyhuang
  */
@@ -33,18 +35,31 @@ public class DateFilter implements Filter<Date> {
 	}
 
 	@Override
-	public boolean test(Date data) {
+	public boolean test(Date data, FilterParams filterParams) {
+		boolean inRangeInclusive = filterParams != null && filterParams.isInRangeInclusive();
+		boolean includeBlanksInEquals = filterParams != null && filterParams.isIncludeBlanksInEquals();
+		boolean includeBlanksInLessThan = filterParams != null && filterParams.isIncludeBlanksInLessThan();
+		boolean includeBlanksInGreaterThan = filterParams != null && filterParams.isIncludeBlanksInGreaterThan();
+
 		switch (_type) {
 			case EQUALS:
+				if (includeBlanksInEquals && data == null) return true;
 				return _from.equals(data);
 			case NOT_EQUAL:
+				if (includeBlanksInEquals && data == null) return true;
 				return !_from.equals(data);
 			case LESS_THAN:
+				if (includeBlanksInLessThan && data == null) return true;
 				return data != null && data.before(_from);
 			case GREATER_THAN:
+				if (includeBlanksInGreaterThan && data == null) return true;
 				return data != null && data.after(_from);
-			case IN_RANGE: // TODO: implement inRangeInclusive
-				return data != null && data.compareTo(_from) > 0 && data.compareTo(_to) < 0;
+			case IN_RANGE:
+				return data != null && (
+					inRangeInclusive
+							? data.compareTo(_from) >= 0 && data.compareTo(_to) <= 0
+							: data.compareTo(_from) > 0 && data.compareTo(_to) < 0
+					);
 			default: // no filter
 				return true;
 		}
