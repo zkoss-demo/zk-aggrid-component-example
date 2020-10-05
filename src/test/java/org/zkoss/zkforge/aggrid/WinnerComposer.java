@@ -37,6 +37,8 @@ import org.zkoss.zul.ListModelList;
 public class WinnerComposer extends SelectorComposer<Aggrid<Winner>> {
 	private Aggrid<Winner> comp;
 	@Wire
+	private AggridDefaultColumn agcd;
+	@Wire
 	private Aggridcolumn<Winner> agc2;
 	private ListModelList<Winner> winnerModel;
 
@@ -59,11 +61,15 @@ public class WinnerComposer extends SelectorComposer<Aggrid<Winner>> {
 		winnerModel.addToSelection(winnerModel.getElementAt(100));
 		winnerModel.addToSelection(winnerModel.getElementAt(200));
 
+		final FilterParams defaultParams = new FilterParams();
+		defaultParams.setButtons(Arrays.asList("apply", "reset"));
+		defaultParams.setInRangeInclusive(true);
+		defaultParams.setCloseOnApply(true);
+		agcd.setFilterParams(defaultParams);
+
 		final FilterParams params = new FilterParams();
+		params.setInRangeInclusive(false);
 		agc2.setFilterParams(params);
-		params.setButtons(Arrays.asList("apply", "reset"));
-		params.setInRangeInclusive(true);
-		params.setCloseOnApply(true);
 	}
 
 	@Listen("onClick = #btnCurrSel")

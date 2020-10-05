@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.zkoss.json.JSONObject;
 import org.zkoss.util.CacheMap;
+import org.zkoss.zkforge.aggrid.AggridDefaultColumn;
 import org.zkoss.zkforge.aggrid.FilterParams;
 
 /**
@@ -30,7 +31,11 @@ public class ColumnFilters {
 	}
 
 	public static FilterParams getFilterParams(String column) {
-		return FILTER_PARAMS_CACHE.get(column);
+		final FilterParams defaultFilterParams = FILTER_PARAMS_CACHE.get(AggridDefaultColumn.class.getName());
+		final FilterParams params = FILTER_PARAMS_CACHE.get(column);
+		return defaultFilterParams != null
+				? new CompositeFilterParams(defaultFilterParams, params)
+				: params;
 	}
 
 	public static void putFilterParams(String column, FilterParams filterParams) {

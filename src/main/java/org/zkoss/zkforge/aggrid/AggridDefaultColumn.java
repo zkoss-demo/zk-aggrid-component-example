@@ -13,6 +13,8 @@ package org.zkoss.zkforge.aggrid;
 
 import java.util.Comparator;
 
+import org.zkoss.zkforge.aggrid.filter.ColumnFilters;
+
 /**
  * @author rudyhuang
  */
@@ -34,8 +36,7 @@ public class AggridDefaultColumn extends Aggridcolumn<Object> {
 
 	@Override
 	protected void initFilterParams() {
-		// FIXME: FilterParams of defaultColDef, should be used if none was provided
-		// do nothing
+		ColumnFilters.putFilterParams(AggridDefaultColumn.class.getName(), getFilterParams());
 	}
 
 	@Override
