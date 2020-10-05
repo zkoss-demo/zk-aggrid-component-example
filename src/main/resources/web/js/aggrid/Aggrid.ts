@@ -61,6 +61,7 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 		if (defaultColDef) {
 			gridOptions.defaultColDef = defaultColDef;
 		}
+		gridOptions.columnDefs = this._getColDefs();
 		gridOptions.getRowNodeId = this._getRowUuid;
 		gridOptions.rowModelType = 'infinite';
 		gridOptions.datasource = this._model ? this._newDataSource() : this._emptyDataSource();
@@ -68,6 +69,7 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 		new agGrid.Grid(this.$n(), gridOptions);
 		this._registerCallbacks();
 		zWatch.listen({onResponse: this});
+		this._shouldUpdateColDefs = false;
 	},
 	unbind_(): void {
 		zWatch.unlisten({onResponse: this});
@@ -116,9 +118,8 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 		return null;
 	},
 	_updateColDefs(): void {
-		let api = this.gridApi();
-		api.setColumnDefs([]);
-		api.setColumnDefs(this._getColDefs());
+		this._gridOptions.columnDefs = this._getColDefs();
+		this.rerender();
 	},
 	_registerCallbacks(): void {
 		this.gridApi().addGlobalListener(this.proxy(this._handleEvents));
