@@ -120,4 +120,9 @@ public class WinnerComposer extends SelectorComposer<Aggrid<Winner>> {
 			Notification.show("Modified");
 		}
 	}
+
+	@Listen("onClick = #tglPagi")
+	public void handleTogglePagination() {
+		comp.setPagination(!comp.isPagination());
+	}
 }

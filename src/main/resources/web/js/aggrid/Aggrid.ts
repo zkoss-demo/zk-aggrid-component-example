@@ -33,7 +33,12 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 		agGrid.PropertyKeys.ALL_PROPERTIES.forEach(prop => {
 			Object.defineProperty(this, prop,{
 				configurable: true, // some properties are multi-type (e.g: string and function), possible duplicated
-				set(newValue) { this._gridOptions[prop] = newValue; },
+				set(newValue) {
+					this._gridOptions[prop] = newValue;
+					if (this.desktop) {
+						this.rerenderLater_ ? this.rerenderLater_() : this.rerender();
+					}
+				},
 				get() { return this._gridOptions[prop]; }
 			});
 		});
@@ -56,11 +61,8 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 	},
 	bind_(): void {
 		this.$supers(aggrid.Aggrid, 'bind_', arguments);
-		let gridOptions = this._gridOptions,
-			defaultColDef = this._getDefaultColDef();
-		if (defaultColDef) {
-			gridOptions.defaultColDef = defaultColDef;
-		}
+		let gridOptions = this._gridOptions;
+		gridOptions.defaultColDef = this._getDefaultColDef();
 		gridOptions.columnDefs = this._getColDefs();
 		gridOptions.getRowNodeId = this._getRowUuid;
 		gridOptions.rowModelType = 'infinite';
@@ -118,6 +120,7 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 		return null;
 	},
 	_updateColDefs(): void {
+		this._gridOptions.defaultColDef = this._getDefaultColDef();
 		this._gridOptions.columnDefs = this._getColDefs();
 		this.rerender();
 	},

@@ -43,6 +43,7 @@ Copyright (C) 2020 Potix Corporation. All Rights Reserved.
 			<toolbarbutton label="set pinned" onClick='agc1.pinned = "right"'/>
 			<toolbarbutton label="invalidate (Server)" onClick="ag.invalidate()"/>
 			<toolbarbutton label="invalidate (Client)" w:onClick="zk.$('$ag').rerender()"/>
+			<toolbarbutton id="tglPagi" label="toggle pagination"/>
 		</toolbar>
 		<panelchildren>
 			<ag-grid id="ag" hflex="1" vflex="1"  theme="ag-theme-material"
