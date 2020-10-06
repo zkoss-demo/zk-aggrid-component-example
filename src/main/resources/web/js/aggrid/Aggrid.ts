@@ -11,6 +11,7 @@ Copyright (C) 2020 Potix Corporation. All Rights Reserved.
  */
 import {
 	ColDef,
+	Column,
 	ColumnApi,
 	GridApi,
 	IDatasource,
@@ -109,15 +110,24 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 	columnApi(): ColumnApi {
 		return this._gridOptions.columnApi;
 	},
-	_getColDefs(): Array<ColDef> {
-		return this.nChildren ? aggrid.Aggridcolumn.mapToColumnDefs(this.firstChild) : [];
-	},
 	_getDefaultColDef(): ColDef | null {
-		for (let child = this.firstChild; child; child = child.nextSibling) {
-			if (aggrid.Aggriddefaultcolumn.isInstance(child))
-				return child.toColDef();
+		return this._findColumn(aggrid.Aggriddefaultcolumn.isInstance, c => c.toColDef());
+	},
+	_findColumn<T>(test: (o: zk.Widget) => any, result: (o: zk.Widget) => T): T | null {
+		let stack = [this.firstChild];
+		while (stack.length > 0) {
+			let column = stack.shift();
+			if (column) {
+				if (test(column))
+					return result(column);
+				stack.push(column.firstChild);
+				stack.push(column.nextSibling);
+			}
 		}
 		return null;
+	},
+	_getColDefs(): ColDef[] {
+		return aggrid.Aggridcolumn.mapToColumnDefs(this.firstChild);
 	},
 	_updateColDefs(): void {
 		this._gridOptions.defaultColDef = this._getDefaultColDef();
@@ -165,21 +175,29 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 		}
 	},
 	_fireEvent(name: string, e) {
-		this.fire('on' + name.substring(0, 1).toUpperCase() + name.substring(1), this._filterEvent(e));
+		let eventName = 'on' + name.substring(0, 1).toUpperCase() + name.substring(1);
+		if (this.isListen(eventName, {any: true}))
+			this.fire(eventName, this._filterEvent(e));
 	},
 	_filterEvent(e): object {
-		let keys = ['api', 'columnApi', 'afterFloatingFilter', 'event',
+		let keys = ['api', 'columnApi', 'event',
 				'node', 'nodes', 'overNode', 'data', 'afterFloatingFilter',
 				'columnGroup', 'column', 'columns', 'flexColumns', 'source', 'target'],
-			target = {agGrid: true};
+			target = {agGrid: true},
+			column: Column | null = e['column'],
+			columns: Column[] | null = e['columns'];
+		if (column)
+			target['column'] = zk.$(column.getColDef()['_zk_uuid']);
+		if (columns)
+			target['columns'] = columns.map(c => zk.$(c.getColDef()['_zk_uuid']));
 		for (let i in e) {
+			if (!e.hasOwnProperty(i)) continue;
 			if (keys.indexOf(i) >= 0) continue;
-			if (!Object.prototype.hasOwnProperty.call(e, i)) continue;
 			target[i] = e[i];
 		}
 		return target;
 	},
-	_pagingBlock(rows, lastRow): void {
+	_pagingBlock(rows: any[], lastRow?: number): void {
 		let successCallback = this._successCallback;
 		if (successCallback) {
 			this._successCallback = null;

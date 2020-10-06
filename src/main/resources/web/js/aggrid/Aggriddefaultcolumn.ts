@@ -10,12 +10,8 @@
 Copyright (C) 2020 Potix Corporation. All Rights Reserved.
 */
 // @ts-ignore
-import {ColDef} from '@ag-grid-community/core';
 
 (() => {
 aggrid.Aggriddefaultcolumn = zk.$extends(aggrid.Aggridcolumn, {
-	toColDef(): ColDef {
-		return zk.copy({}, this._colDef);
-	}
 });
 })();

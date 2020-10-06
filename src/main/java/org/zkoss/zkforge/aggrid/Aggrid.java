@@ -92,10 +92,10 @@ public class Aggrid<E> extends XulElement {
 		addClientEvent(Aggrid.class, "onRowDragLeave", 0);
 		addClientEvent(Aggrid.class, "onRowDragEnd", 0);
 		// Columns
-		addClientEvent(Aggrid.class, "onColumnVisible", 0);
-		addClientEvent(Aggrid.class, "onColumnPinned", 0);
-		addClientEvent(Aggrid.class, "onColumnResized", 0);
-		addClientEvent(Aggrid.class, "onColumnMoved", 0);
+		addClientEvent(Aggrid.class, "onColumnVisible", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Aggrid.class, "onColumnPinned", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Aggrid.class, "onColumnResized", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Aggrid.class, "onColumnMoved", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Aggrid.class, "onColumnRowGroupChanged", 0);
 		addClientEvent(Aggrid.class, "onColumnValueChanged", 0);
 		addClientEvent(Aggrid.class, "onColumnPivotModeChanged", 0);
@@ -1900,6 +1900,15 @@ public class Aggrid<E> extends XulElement {
 	public void service(AuRequest request, boolean everError) {
 		String command = request.getCommand();
 		Map<String, Object> data = request.getData();
+		AgGridEvent<E> agGridEvent = null;
+		if (data.containsKey("agGrid")) {
+			data.remove("agGrid");
+			Integer rowIndex = (Integer) data.get("rowIndex");
+			E node = null;
+			if (_model != null && rowIndex != null)
+				node = _model.getElementAt(rowIndex);
+			agGridEvent = AgGridEvent.getAgGridEvent(request, node);
+		}
 		switch (command) {
 			case "onPaging":
 				if (_model != null) {
@@ -1945,15 +1954,34 @@ public class Aggrid<E> extends XulElement {
 						selectedObjects, prevSeldObjects, collectUnselectedObjects(prevSeldObjects, selectedObjects),
 						null, null, AuRequests.parseKeys(data)));
 				break;
+			case "onColumnPinned":
+				if (agGridEvent != null) {
+					try {
+						String pinned = (String) agGridEvent.get("pinned");
+						disableClientUpdate(true);
+						agGridEvent.getColumns().forEach(col -> col.setPinned(pinned));
+					} finally {
+						disableClientUpdate(false);
+					}
+					Events.postEvent(agGridEvent);
+				}
+				break;
+			case "onColumnVisible":
+				if (agGridEvent != null) {
+					try {
+						boolean visible = (Boolean) agGridEvent.get("visible");
+						disableClientUpdate(true);
+						agGridEvent.getColumns().forEach(col -> col.setHide(!visible));
+					} finally {
+						disableClientUpdate(false);
+					}
+					Events.postEvent(agGridEvent);
+				}
+				break;
 			default:
-				if (data.containsKey("agGrid")) {
-					data.remove("agGrid");
-					Integer rowIndex = (Integer) data.get("rowIndex");
-					E node = null;
-					if (_model != null && rowIndex != null)
-						node = _model.getElementAt(rowIndex);
-					Events.postEvent(AgGridEvent.getAgGridEvent(request, node));
-				} else
+				if (agGridEvent != null)
+					Events.postEvent(agGridEvent);
+				else
 					super.service(request, everError);
 		}
 	}

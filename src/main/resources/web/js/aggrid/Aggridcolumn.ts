@@ -46,6 +46,7 @@ aggrid.Aggridcolumn = zk.$extends(zk.Widget, {
 	},
 	_generateColDef(): ColDef {
 		let colDef: ColDef = zk.copy({}, this._colDef);
+		colDef['_zk_uuid'] = this.uuid;
 		delete colDef.children;
 		return colDef;
 	},
