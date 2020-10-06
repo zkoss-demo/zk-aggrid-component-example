@@ -62,7 +62,7 @@ aggrid.Aggridcolumn = zk.$extends(zk.Widget, {
 	mapToColumnDefs(column: zk.Widget | null): ColDef[] {
 		let columnDefs: ColDef[] = [];
 		for (; column; column = column.nextSibling) {
-			if (aggrid.Aggridcolumn.isInstance(column))
+			if (aggrid.Aggridcolumn.isInstance(column) && !aggrid.Aggriddefaultcolumn.isInstance(column))
 				columnDefs.push(column.toColDef());
 		}
 		return columnDefs;
