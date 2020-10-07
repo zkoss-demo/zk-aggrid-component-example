@@ -788,7 +788,7 @@ public class Aggridcolumn<E> extends AbstractComponent {
 
 	@Override
 	public void beforeChildAdded(Component child, Component insertBefore) {
-		if (!(child instanceof Aggridcolumn))
+		if (!(child instanceof Aggridcolumn) || child instanceof AggridDefaultColumn)
 			throw new UiException("Unsupported child: " + child);
 		super.beforeChildAdded(child, insertBefore);
 	}
