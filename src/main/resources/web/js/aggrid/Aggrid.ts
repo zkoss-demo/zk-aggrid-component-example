@@ -111,7 +111,7 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 		return this._gridOptions.columnApi;
 	},
 	_getDefaultColDef(): ColDef | null {
-		return this._findColumn(aggrid.Aggriddefaultcolumn.isInstance, c => c.toColDef());
+		return this._findColumn(c => aggrid.Aggriddefaultcolumn.isInstance(c), c => c.toColDef());
 	},
 	_findColumn<T>(test: (o: zk.Widget) => any, result: (o: zk.Widget) => T): T | null {
 		let stack = [this.firstChild];
@@ -187,9 +187,9 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 			column: Column | null = e['column'],
 			columns: Column[] | null = e['columns'];
 		if (column)
-			target['column'] = zk.$(column.getColDef()['_zk_uuid']);
+			target['column'] = column.getColDef()['_zk_uuid'];
 		if (columns)
-			target['columns'] = columns.map(c => zk.$(c.getColDef()['_zk_uuid']));
+			target['columns'] = columns.map(c => c.getColDef()['_zk_uuid']);
 		for (let i in e) {
 			if (!e.hasOwnProperty(i)) continue;
 			if (keys.indexOf(i) >= 0) continue;
