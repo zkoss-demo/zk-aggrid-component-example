@@ -94,8 +94,8 @@ public class Aggrid<E> extends XulElement {
 		// Columns
 		addClientEvent(Aggrid.class, "onColumnVisible", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
 		addClientEvent(Aggrid.class, "onColumnPinned", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Aggrid.class, "onColumnResized", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
-		addClientEvent(Aggrid.class, "onColumnMoved", CE_IMPORTANT | CE_DUPLICATE_IGNORE);
+		addClientEvent(Aggrid.class, "onColumnResized", CE_DUPLICATE_IGNORE);
+		addClientEvent(Aggrid.class, "onColumnMoved", 0);
 		addClientEvent(Aggrid.class, "onColumnRowGroupChanged", 0);
 		addClientEvent(Aggrid.class, "onColumnValueChanged", 0);
 		addClientEvent(Aggrid.class, "onColumnPivotModeChanged", 0);
@@ -1972,6 +1972,22 @@ public class Aggrid<E> extends XulElement {
 						boolean visible = (Boolean) agGridEvent.get("visible");
 						disableClientUpdate(true);
 						agGridEvent.getColumns().forEach(col -> col.setHide(!visible));
+					} finally {
+						disableClientUpdate(false);
+					}
+					Events.postEvent(agGridEvent);
+				}
+				break;
+			case "onColumnResized":
+				if (agGridEvent != null) {
+					try {
+						Integer actualWidth = (Integer) agGridEvent.get("actualWidth");
+						Aggridcolumn<E> col = agGridEvent.getColumn();
+						if (col != null && actualWidth != null) {
+							disableClientUpdate(true);
+							col.setFlex(0);
+							col.setWidth(actualWidth);
+						}
 					} finally {
 						disableClientUpdate(false);
 					}

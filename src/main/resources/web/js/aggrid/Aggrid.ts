@@ -170,6 +170,15 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 				this._checkSelected();
 				this._fireEvent(name, e);
 				break;
+			case 'columnResized':
+				if (e.column && e.source == 'uiColumnDragged') {
+					let evt: any = this._filterEvent(e);
+					evt.actualWidth = e.column.actualWidth;
+					this.fire('onColumnResized', evt, {toServer: true});
+				} else {
+					this._fireEvent(name, e);
+				}
+				break;
 			default:
 				this._fireEvent(name, e);
 		}
