@@ -21,6 +21,8 @@ import {
 (() => {
 aggrid.Aggrid = zk.$extends(zul.Widget, {
 	_theme: 'ag-theme-alpine',
+	_currentTop: 0,
+	_currentPage: 0,
 
 	$init(): void {
 		this.$supers('$init', arguments);
@@ -73,6 +75,7 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 		this._registerCallbacks();
 		zWatch.listen({onResponse: this});
 		this._shouldUpdateColDefs = false;
+		this._init = false;
 	},
 	unbind_(): void {
 		zWatch.unlisten({onResponse: this});
@@ -166,8 +169,13 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 				}
 				break;
 			case 'paginationChanged':
-			case 'viewportChanged':
+				this._currentPage = e.api.paginationGetCurrentPage();
 				this._checkSelected();
+				this._fireEvent(name, e);
+				break;
+			case 'viewportChanged':
+				this._currentTop = e.firstRow;
+				this._checkSelected(); // FIXME: poor performance
 				this._fireEvent(name, e);
 				break;
 			case 'columnResized':
@@ -228,6 +236,16 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 			this._successCallback = null;
 			this.gridApi().hideOverlay();
 			successCallback(rows, lastRow);
+			// FIXME: a dirty workaround to keep page/scroll positions
+			if (!this._init) {
+				this._init = true;
+				let api = this.gridApi();
+				if (this._currentPage)
+					api.paginationGoToPage(this._currentPage);
+				if (this._currentTop) {
+					api.ensureIndexVisible(this._currentTop, 'top');
+				}
+			}
 		}
 	},
 	_checkSelected(): void {
