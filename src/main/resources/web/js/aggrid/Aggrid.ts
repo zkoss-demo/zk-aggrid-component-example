@@ -172,12 +172,20 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 				break;
 			case 'columnResized':
 				if (e.column && e.source == 'uiColumnDragged') {
-					let evt: any = this._filterEvent(e);
-					evt.actualWidth = e.column.actualWidth;
-					this.fire('onColumnResized', evt, {toServer: true});
+					this.fire('onColumnResized',
+						{...this._filterEvent(e), actualWidth: e.column.actualWidth},
+						{toServer: true});
 				} else {
 					this._fireEvent(name, e);
 				}
+				break;
+			case 'columnPinned':
+				this._updateColumnDef(e.columns, 'pinned', e.pinned);
+				this._fireEvent(name, e);
+				break;
+			case 'columnVisible':
+				this._updateColumnDef(e.columns, 'hide', !e.visible);
+				this._fireEvent(name, e);
 				break;
 			default:
 				this._fireEvent(name, e);
@@ -205,6 +213,14 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 			target[i] = e[i];
 		}
 		return target;
+	},
+	_updateColumnDef(cols: ColDef[] | null, attr: string, value: any): void {
+		if (cols) {
+			cols.forEach(c => {
+				let wgt = zk.$(c.getColDef()['_zk_uuid']);
+				if (wgt) wgt._colDef[attr] = value;
+			})
+		}
 	},
 	_pagingBlock(rows: any[], lastRow?: number): void {
 		let successCallback = this._successCallback;
