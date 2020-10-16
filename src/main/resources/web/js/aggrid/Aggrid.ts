@@ -180,8 +180,11 @@ aggrid.Aggrid = zk.$extends(zul.Widget, {
 				break;
 			case 'columnResized':
 				if (e.column && e.source == 'uiColumnDragged') {
+					let actualWidth = e.column.actualWidth;
+					this._updateColumnDef([e.column], 'flex', 0);
+					this._updateColumnDef([e.column], 'width', actualWidth);
 					this.fire('onColumnResized',
-						{...this._filterEvent(e), actualWidth: e.column.actualWidth},
+						{...this._filterEvent(e), actualWidth: actualWidth},
 						{toServer: true});
 				} else {
 					this._fireEvent(name, e);
