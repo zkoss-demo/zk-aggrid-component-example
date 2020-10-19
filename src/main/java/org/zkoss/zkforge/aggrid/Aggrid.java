@@ -16,6 +16,7 @@ import static java.util.stream.Collectors.toSet;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.BitSet;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -135,6 +136,16 @@ public class Aggrid<E> extends XulElement {
 	private transient boolean _ignoreDataSelectionEvent;
 	private final ListDataListener _modelListDataListener = this::onListDataChange;
 	private AggridDefaultColumn _defaultColDef;
+
+	public Aggrid() {
+		expiryCheck();
+	}
+
+	private void expiryCheck() {
+		if (LocalDate.now().isAfter(LocalDate.of(2021, 6, 1))) {
+			throw new UiException("This trial version is available before 2021/06/01!");
+		}
+	}
 
 	//#region properties
 	public boolean isSuppressAutoSize() {
