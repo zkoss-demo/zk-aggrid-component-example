@@ -14,6 +14,7 @@
 		<mold>
 			<mold-name>default</mold-name>
 			<mold-uri>mold/aggrid.js</mold-uri>
+			<css-uri>css/aggrid.css.dsp</css-uri>
 		</mold>
 	</component>
 	<component>
