@@ -1,4 +1,5 @@
-# ZK component Aggrid
+# ZK Aggrid
+This is a community project for demonstrating how you can create a custom component using TypeScript. This component is not an official ZK component and is not supported by ZK.
 
 ## Prerequisite
 * Java 8
